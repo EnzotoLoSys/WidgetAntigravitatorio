@@ -463,22 +463,20 @@ function Save-WidgetConfig {
     } catch {}
 }
 
-# Drag card anywhere with left click
+# Drag card anywhere with left click; Double click cycles modes: Bars -> Gauges -> Chips
 $mainBorder.Add_MouseLeftButtonDown({
-    if ($args[0].LeftButton -eq [System.Windows.Input.MouseButtonState]::Pressed) {
+    $e = $args[0]
+    if ($e.ClickCount -ge 2) {
+        switch ($script:currentMode) {
+            "Bars" { Set-WidgetMode "Gauges" }
+            "Gauges" { Set-WidgetMode "Chips" }
+            Default { Set-WidgetMode "Bars" }
+        }
+        Save-WidgetConfig
+    } elseif ($e.LeftButton -eq [System.Windows.Input.MouseButtonState]::Pressed) {
         $window.DragMove()
         Save-WidgetConfig
     }
-})
-
-# Double click cycles modes: Bars -> Gauges -> Chips
-$mainBorder.Add_MouseDoubleClick({
-    switch ($script:currentMode) {
-        "Bars" { Set-WidgetMode "Gauges" }
-        "Gauges" { Set-WidgetMode "Chips" }
-        Default { Set-WidgetMode "Bars" }
-    }
-    Save-WidgetConfig
 })
 
 function Toggle-Pin {
