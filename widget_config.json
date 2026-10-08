@@ -1,13 +1,13 @@
 {
     "Opacity":  0.1,
-    "Scale":  0.65,
-    "Mode":  "Bars",
-    "Left":  640.80000000000007,
-    "Top":  353.6,
-    "Width":  255,
-    "Height":  205,
+    "Scale":  0.90564302900651,
+    "Mode":  "Gauges",
+    "Left":  1015.2,
+    "Top":  243.20000000000002,
+    "Pinned":  true,
     "Show5h":  true,
     "ShowWeekly":  true,
     "ShowContext":  true,
-    "ShowSubtitles":  true
+    "ShowSubtitles":  true,
+    "ClickThrough":  false
 }

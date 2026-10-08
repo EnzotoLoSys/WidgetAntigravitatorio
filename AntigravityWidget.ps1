@@ -1,5 +1,46 @@
 Add-Type -AssemblyName PresentationFramework, PresentationCore, WindowsBase, System.Windows.Forms, System.Drawing
 
+# Win32 Window Tools (Drag & Click-Through)
+if (-not ([System.Management.Automation.PSTypeName]'Win32WindowTools').Type) {
+    Add-Type -TypeDefinition @'
+using System;
+using System.Runtime.InteropServices;
+
+public class Win32WindowTools {
+    public const int GWL_EXSTYLE = -20;
+    public const int WS_EX_TRANSPARENT = 0x00000020;
+    public const int WM_NCLBUTTONDOWN = 0xA1;
+    public const int HTCAPTION = 0x2;
+
+    [DllImport("user32.dll")]
+    public static extern bool ReleaseCapture();
+
+    [DllImport("user32.dll")]
+    public static extern IntPtr SendMessage(IntPtr hWnd, int Msg, int wParam, int lParam);
+
+    [DllImport("user32.dll", SetLastError = true)]
+    public static extern int GetWindowLong(IntPtr hWnd, int nIndex);
+
+    [DllImport("user32.dll", SetLastError = true)]
+    public static extern int SetWindowLong(IntPtr hWnd, int nIndex, int dwNewLong);
+
+    public static void SetClickThrough(IntPtr hWnd, bool enable) {
+        int exStyle = GetWindowLong(hWnd, GWL_EXSTYLE);
+        if (enable) {
+            SetWindowLong(hWnd, GWL_EXSTYLE, exStyle | WS_EX_TRANSPARENT);
+        } else {
+            SetWindowLong(hWnd, GWL_EXSTYLE, exStyle & ~WS_EX_TRANSPARENT);
+        }
+    }
+
+    public static void DragWindow(IntPtr hWnd) {
+        ReleaseCapture();
+        SendMessage(hWnd, WM_NCLBUTTONDOWN, HTCAPTION, 0);
+    }
+}
+'@
+}
+
 $xaml = @'
 <Window xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -17,6 +58,13 @@ $xaml = @'
         <Style TargetType="TextBlock">
             <Setter Property="FontFamily" Value="Segoe UI, Segoe UI Variable, Arial"/>
             <Setter Property="Foreground" Value="#E2E8F0"/>
+            <Setter Property="IsHitTestVisible" Value="False"/>
+        </Style>
+        <Style TargetType="ProgressBar">
+            <Setter Property="IsHitTestVisible" Value="False"/>
+        </Style>
+        <Style TargetType="Ellipse">
+            <Setter Property="IsHitTestVisible" Value="False"/>
         </Style>
         <Style TargetType="CheckBox">
             <Setter Property="FontFamily" Value="Segoe UI"/>
@@ -25,14 +73,27 @@ $xaml = @'
             <Setter Property="Cursor" Value="Hand"/>
             <Setter Property="Margin" Value="0,1,0,2"/>
         </Style>
+        
+        <!-- Native Dark Context Menu Style -->
+        <Style TargetType="ContextMenu">
+            <Setter Property="Background" Value="#0F172A"/>
+            <Setter Property="BorderBrush" Value="#334155"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Foreground" Value="#E2E8F0"/>
+            <Setter Property="FontSize" Value="11"/>
+        </Style>
+        <Style TargetType="MenuItem">
+            <Setter Property="Foreground" Value="#E2E8F0"/>
+            <Setter Property="Background" Value="#0F172A"/>
+        </Style>
     </Window.Resources>
 
-    <Grid Name="RootContainer" Margin="4">
+    <Grid Name="RootContainer" Margin="4" Background="#00000000">
         <Grid.LayoutTransform>
             <ScaleTransform x:Name="UiScale" ScaleX="1.0" ScaleY="1.0"/>
         </Grid.LayoutTransform>
 
-        <!-- Main Card Border (Snug & Ultra-Compact) -->
+        <!-- Main Card Border (Snug, Ultra-Compact & Right-Click Context Menu) -->
         <Border Name="MainBorder" CornerRadius="10" BorderThickness="1.2" Cursor="SizeAll">
             <Border.BorderBrush>
                 <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
@@ -47,6 +108,24 @@ $xaml = @'
             <Border.Effect>
                 <DropShadowEffect BlurRadius="10" ShadowDepth="2" Direction="270" Color="#000000" Opacity="0.85"/>
             </Border.Effect>
+
+            <!-- Right-Click Menu attached directly to the visible card -->
+            <Border.ContextMenu>
+                <ContextMenu Name="WidgetContextMenu">
+                    <MenuItem Header="Cambiar Vista">
+                        <MenuItem Name="CtxModeBars" Header="Barras"/>
+                        <MenuItem Name="CtxModeGauges" Header="Tacometros"/>
+                        <MenuItem Name="CtxModeChips" Header="Solo Porcentajes"/>
+                    </MenuItem>
+                    <MenuItem Name="CtxSettings" Header="Opciones y Estilo"/>
+                    <MenuItem Name="CtxPin" Header="Siempre arriba" IsCheckable="True"/>
+                    <MenuItem Name="CtxClickThrough" Header="Modo Fantasma (Click-Through)" IsCheckable="True"/>
+                    <Separator Background="#334155"/>
+                    <MenuItem Name="CtxRefresh" Header="Actualizar ahora"/>
+                    <Separator Background="#334155"/>
+                    <MenuItem Name="CtxClose" Header="Cerrar Widget"/>
+                </ContextMenu>
+            </Border.ContextMenu>
 
             <StackPanel Margin="7,6,7,6">
                 <!-- ================= VISTA 1: BARRAS COMPACTAS ================= -->
@@ -231,6 +310,8 @@ $xaml = @'
                     <CheckBox Name="ChkShowWeekly" Content="Semana" IsChecked="True"/>
                     <CheckBox Name="ChkShowContext" Content="Contexto" IsChecked="True"/>
                     <CheckBox Name="ChkShowSubtitles" Content="Subtitulos" IsChecked="True"/>
+                    <CheckBox Name="ChkPinSettings" Content="Siempre arriba" IsChecked="True"/>
+                    <CheckBox Name="ChkClickThrough" Content="Modo Fantasma (Click-Through)" IsChecked="False"/>
 
                     <Grid Margin="0,2,0,1">
                         <TextBlock Text="Opacidad" FontSize="8" Foreground="#94A3B8"/>
@@ -278,6 +359,7 @@ $window = [System.Windows.Markup.XamlReader]::Load($reader)
 
 # Handles
 $mainBorder = $window.FindName("MainBorder")
+$rootContainer = $window.FindName("RootContainer")
 $uiScale = $window.FindName("UiScale")
 $viewBars = $window.FindName("ViewBars")
 $viewGauges = $window.FindName("ViewGauges")
@@ -300,6 +382,8 @@ $chkShow5h = $window.FindName("ChkShow5h")
 $chkShowWeekly = $window.FindName("ChkShowWeekly")
 $chkShowContext = $window.FindName("ChkShowContext")
 $chkShowSubtitles = $window.FindName("ChkShowSubtitles")
+$chkPinSettings = $window.FindName("ChkPinSettings")
+$chkClickThrough = $window.FindName("ChkClickThrough")
 
 $prog5h = $window.FindName("Prog5h")
 $txt5hPct = $window.FindName("Txt5hPct")
@@ -334,13 +418,40 @@ $btnThemePurple = $window.FindName("BtnThemePurple")
 $btnThemeGreen = $window.FindName("BtnThemeGreen")
 $btnSaveSettings = $window.FindName("BtnSaveSettings")
 
+# Context Menu elements
+$ctxModeBars = $window.FindName("CtxModeBars")
+$ctxModeGauges = $window.FindName("CtxModeGauges")
+$ctxModeChips = $window.FindName("CtxModeChips")
+$ctxSettings = $window.FindName("CtxSettings")
+$ctxPin = $window.FindName("CtxPin")
+$ctxClickThrough = $window.FindName("CtxClickThrough")
+$ctxRefresh = $window.FindName("CtxRefresh")
+$ctxClose = $window.FindName("CtxClose")
+
 # Config persistence
 $configDir = if ($PSScriptRoot) { $PSScriptRoot } else { "$HOME\AntigravityWidget" }
 if (-not (Test-Path $configDir)) {
     New-Item -ItemType Directory -Force -Path $configDir | Out-Null
 }
 $configFile = "$configDir\widget_config.json"
-$currentMode = "Bars"
+$script:currentMode = "Bars"
+$script:isClickThrough = $false
+
+function Set-ClickThroughState ($enable) {
+    $script:isClickThrough = [bool]$enable
+    $chkClickThrough.IsChecked = $script:isClickThrough
+    $ctxClickThrough.IsChecked = $script:isClickThrough
+    if ($trayClickThroughItem) { $trayClickThroughItem.Checked = $script:isClickThrough }
+    
+    # Apply to Win32 handle
+    try {
+        $helper = [System.Windows.Interop.WindowInteropHelper]::new($window)
+        $hwnd = $helper.Handle
+        if ($hwnd -ne [IntPtr]::Zero) {
+            [Win32WindowTools]::SetClickThrough($hwnd, $script:isClickThrough)
+        }
+    } catch {}
+}
 
 function Set-WidgetMode ($mode) {
     $script:currentMode = $mode
@@ -414,6 +525,25 @@ $chkShowContext.Add_Unchecked({ Apply-VisibilityRules })
 $chkShowSubtitles.Add_Checked({ Apply-VisibilityRules })
 $chkShowSubtitles.Add_Unchecked({ Apply-VisibilityRules })
 
+function Save-WidgetConfig {
+    try {
+        $cfgObj = [PSCustomObject]@{
+            Opacity       = $sliderOpacity.Value
+            Scale         = $sliderScale.Value
+            Mode          = $script:currentMode
+            Left          = $window.Left
+            Top           = $window.Top
+            Pinned        = $window.Topmost
+            Show5h        = $chkShow5h.IsChecked
+            ShowWeekly    = $chkShowWeekly.IsChecked
+            ShowContext   = $chkShowContext.IsChecked
+            ShowSubtitles = $chkShowSubtitles.IsChecked
+            ClickThrough  = $script:isClickThrough
+        }
+        $cfgObj | ConvertTo-Json | Set-Content $configFile -Force
+    } catch {}
+}
+
 # Load saved preferences
 if (Test-Path $configFile) {
     try {
@@ -434,10 +564,16 @@ if (Test-Path $configFile) {
             $window.Left = [double]$cfg.Left
             $window.Top = [double]$cfg.Top
         }
+        if ($cfg.Pinned -ne $null) {
+            $window.Topmost = [bool]$cfg.Pinned
+            $ctxPin.IsChecked = $window.Topmost
+            $chkPinSettings.IsChecked = $window.Topmost
+        }
         if ($cfg.Show5h -ne $null) { $chkShow5h.IsChecked = [bool]$cfg.Show5h }
         if ($cfg.ShowWeekly -ne $null) { $chkShowWeekly.IsChecked = [bool]$cfg.ShowWeekly }
         if ($cfg.ShowContext -ne $null) { $chkShowContext.IsChecked = [bool]$cfg.ShowContext }
         if ($cfg.ShowSubtitles -ne $null) { $chkShowSubtitles.IsChecked = [bool]$cfg.ShowSubtitles }
+        if ($cfg.ClickThrough -ne $null) { $script:isClickThrough = [bool]$cfg.ClickThrough }
         if ($cfg.Mode) { Set-WidgetMode $cfg.Mode } else { Set-WidgetMode "Bars" }
     } catch {
         Set-WidgetMode "Bars"
@@ -446,43 +582,34 @@ if (Test-Path $configFile) {
     Set-WidgetMode "Bars"
 }
 
-function Save-WidgetConfig {
-    try {
-        $cfgObj = [PSCustomObject]@{
-            Opacity       = $sliderOpacity.Value
-            Scale         = $sliderScale.Value
-            Mode          = $script:currentMode
-            Left          = $window.Left
-            Top           = $window.Top
-            Show5h        = $chkShow5h.IsChecked
-            ShowWeekly    = $chkShowWeekly.IsChecked
-            ShowContext   = $chkShowContext.IsChecked
-            ShowSubtitles = $chkShowSubtitles.IsChecked
-        }
-        $cfgObj | ConvertTo-Json | Set-Content $configFile -Force
-    } catch {}
-}
-
-# Drag card anywhere with left click; Double click cycles modes: Bars -> Gauges -> Chips
-$mainBorder.Add_MouseLeftButtonDown({
-    $e = $args[0]
-    if ($e.ClickCount -ge 2) {
-        switch ($script:currentMode) {
-            "Bars" { Set-WidgetMode "Gauges" }
-            "Gauges" { Set-WidgetMode "Chips" }
-            Default { Set-WidgetMode "Bars" }
-        }
-        Save-WidgetConfig
-    } elseif ($e.LeftButton -eq [System.Windows.Input.MouseButtonState]::Pressed) {
-        $window.DragMove()
-        Save-WidgetConfig
+# Native Unconditional Drag via Win32 (100% reliable on left click)
+$dragHandler = {
+    if (-not $script:isClickThrough) {
+        try {
+            $helper = [System.Windows.Interop.WindowInteropHelper]::new($window)
+            $hwnd = $helper.Handle
+            if ($hwnd -ne [IntPtr]::Zero) {
+                [Win32WindowTools]::DragWindow($hwnd)
+                Save-WidgetConfig
+            } else {
+                $window.DragMove()
+                Save-WidgetConfig
+            }
+        } catch {}
     }
-})
+}
+$mainBorder.Add_MouseLeftButtonDown($dragHandler)
 
 function Toggle-Pin {
     $window.Topmost = -not $window.Topmost
+    $ctxPin.IsChecked = $window.Topmost
+    $chkPinSettings.IsChecked = $window.Topmost
     if ($trayPinItem) { $trayPinItem.Checked = $window.Topmost }
+    Save-WidgetConfig
 }
+
+$chkPinSettings.Add_Checked({ if (-not $window.Topmost) { Toggle-Pin } })
+$chkPinSettings.Add_Unchecked({ if ($window.Topmost) { Toggle-Pin } })
 
 function Toggle-Settings {
     if ($viewSettings.Visibility -eq [System.Windows.Visibility]::Visible) {
@@ -509,21 +636,25 @@ $btnSaveSettings.Add_Click({
     Save-WidgetConfig
 })
 
-# Style Buttons
-$btnStyleBars.Add_Click({
-    Set-WidgetMode "Bars"
-    Save-WidgetConfig
-})
+# Settings Mode Buttons
+$btnStyleBars.Add_Click({ Set-WidgetMode "Bars"; Save-WidgetConfig })
+$btnStyleGauges.Add_Click({ Set-WidgetMode "Gauges"; Save-WidgetConfig })
+$btnStyleChips.Add_Click({ Set-WidgetMode "Chips"; Save-WidgetConfig })
 
-$btnStyleGauges.Add_Click({
-    Set-WidgetMode "Gauges"
-    Save-WidgetConfig
-})
+# Context Menu Items (Right Click on Widget)
+$ctxModeBars.Add_Click({ Set-WidgetMode "Bars"; Save-WidgetConfig })
+$ctxModeGauges.Add_Click({ Set-WidgetMode "Gauges"; Save-WidgetConfig })
+$ctxModeChips.Add_Click({ Set-WidgetMode "Chips"; Save-WidgetConfig })
+$ctxSettings.Add_Click({ Toggle-Settings })
+$ctxPin.IsChecked = $window.Topmost
+$ctxPin.Add_Click({ Toggle-Pin })
+$ctxClickThrough.Add_Click({ Set-ClickThroughState (-not $script:isClickThrough); Save-WidgetConfig })
+$ctxRefresh.Add_Click({ Update-WidgetData })
+$ctxClose.Add_Click({ Close-WidgetApp })
 
-$btnStyleChips.Add_Click({
-    Set-WidgetMode "Chips"
-    Save-WidgetConfig
-})
+# Checkbox in settings for Click-Through
+$chkClickThrough.Add_Checked({ Set-ClickThroughState $true })
+$chkClickThrough.Add_Unchecked({ Set-ClickThroughState $false })
 
 # Sliders
 $sliderOpacity.Add_ValueChanged({
@@ -619,6 +750,14 @@ $trayPinItem.CheckOnClick = $true
 $trayPinItem.Checked = $window.Topmost
 $trayPinItem.Add_Click({ Toggle-Pin })
 
+$trayClickThroughItem = $contextMenu.Items.Add("Modo Fantasma (Click-Through)")
+$trayClickThroughItem.CheckOnClick = $true
+$trayClickThroughItem.Checked = $script:isClickThrough
+$trayClickThroughItem.Add_Click({
+    Set-ClickThroughState $trayClickThroughItem.Checked
+    Save-WidgetConfig
+})
+
 $contextMenu.Items.Add("-") | Out-Null
 
 $trayRefreshItem = $contextMenu.Items.Add("Actualizar ahora")
@@ -639,13 +778,13 @@ $notifyIcon.Add_DoubleClick({
     }
 })
 
-# Right click on widget itself opens context menu too!
-$mainBorder.Add_MouseRightButtonUp({
-    $pos = [System.Windows.Forms.Cursor]::Position
-    $contextMenu.Show($pos)
+# Window Loaded & cleanup event
+$window.Add_SourceInitialized({
+    if ($script:isClickThrough) {
+        Set-ClickThroughState $true
+    }
 })
 
-# Window cleanup event
 $window.Add_Closed({
     if ($notifyIcon) {
         $notifyIcon.Visible = $false
