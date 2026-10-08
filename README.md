@@ -29,7 +29,26 @@ Monitorea en tiempo real tu consumo de cuota de Gemini y modelos asociados (vent
 
 ---
 
-## 🛠️ Requisitos de Compilación
+## 💻 Requisitos para Usuarios Finales
+
+Para ejecutar `AntigravityWidget.exe`, solo necesitas:
+- **Windows 10 / 11** (x64)
+- **[.NET 8 Desktop Runtime (x64)](https://dotnet.microsoft.com/download/dotnet/8.0)** oficial de Microsoft.
+
+> [!NOTE]
+> **Aviso de Windows SmartScreen**: Al tratarse de un binario pre-release de código abierto sin firma digital de pago (certificados corporativos anuales), Windows puede mostrar la pantalla de protección la primera vez. Simplemente pulsa en **"Más información"** y luego en **"Ejecutar de todas formas"**.
+
+---
+
+## 🔬 Telemetría y Funcionamiento
+
+- **Cuota de 5 Horas y Semanal**: Se obtiene en tiempo real directamente desde la API IPC local del Language Server de Google Antigravity (`RetrieveUserQuotaSummary`), garantizando exactitud 1:1 con el panel del IDE.
+- **Ventana de Contexto**: Se calcula como una aproximación estimada (~4 caracteres por token) basada en el transcript de la sesión activa.
+- **Modo Desconectado y Ahorro**: Si el IDE se encuentra cerrado, el widget reduce automáticamente su frecuencia de sondeo (backoff a 10s) para un consumo de CPU nulo y marca los valores con el prefijo `~Est.` para mayor transparencia.
+
+---
+
+## 🛠️ Requisitos de Desarrollo y Compilación
 
 - **Windows 10 / 11** (x64)
 - **.NET 8.0 SDK** (o superior)
@@ -50,7 +69,7 @@ cd AntigravityWidgetNet
 dotnet publish -c Release -r win-x64 --self-contained false -p:PublishSingleFile=true -o ../bin
 ```
 
-El binario resultante se generará en `bin/AntigravityWidget.exe` (~200 KB). Es **ultra liviano y de inicio instantáneo**, requiriendo únicamente el .NET 8 Desktop Runtime estándar de Windows.
+El binario resultante se generará en `bin/AntigravityWidget.exe`. Es **ultra liviano y de inicio instantáneo**, requiriendo únicamente el .NET 8 Desktop Runtime estándar de Windows.
 
 ---
 
@@ -58,11 +77,12 @@ El binario resultante se generará en `bin/AntigravityWidget.exe` (~200 KB). Es 
 
 | Acción | Efecto |
 |---|---|
-| **Arrastrar (Click Izquierdo)** | Mueve el widget fluidamente por la pantalla. |
-| **Doble Click Izquierdo** | Abre la ventana de **Preferencias**. |
+| **Arrastrar (Click Izquierdo)** | Mueve el widget fluidamente por la pantalla (soporte multi-monitor). |
+| **Doble Click Izquierdo** | Abre la ventana modal de **Preferencias** con sliders en vivo. |
 | **Click Central (Rueda del Ratón)** | Alterna entre vista **Horizontal** y **Vertical**. |
-| **Click Derecho** | Abre el menú contextual con opciones rápidas. |
-| **Doble Click en la Bandeja** | Restaura o enfoca el widget. |
+| **Click Derecho en el Widget** | Menú contextual: fijar al frente, alternar modos y estilo. |
+| **Click Derecho en la Bandeja (Tray)** | Acceso a Preferencias, centrado, métricas y **activar/desactivar Modo Fantasma**. |
+| **Doble Click en la Bandeja** | Restaura o enfoca el widget en el escritorio. |
 
 ---
 

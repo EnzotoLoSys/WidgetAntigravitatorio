@@ -26,7 +26,9 @@ namespace AntigravityWidget.Services
 
     public static class ConfigService
     {
-        private static readonly string ConfigPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "widget_config.json");
+        private static readonly string ConfigDir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "AntigravityWidget");
+        private static readonly string ConfigPath = Path.Combine(ConfigDir, "widget_config.json");
+        private static readonly string LegacyConfigPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "widget_config.json");
         private static readonly string StartupFolder = Environment.GetFolderPath(Environment.SpecialFolder.Startup);
         private static readonly string ShortcutPath = Path.Combine(StartupFolder, "AntigravityWidget.lnk");
 
@@ -34,6 +36,13 @@ namespace AntigravityWidget.Services
         {
             try
             {
+                // One-time migration of a config that used to live next to the exe.
+                if (!File.Exists(ConfigPath) && File.Exists(LegacyConfigPath))
+                {
+                    Directory.CreateDirectory(ConfigDir);
+                    File.Copy(LegacyConfigPath, ConfigPath);
+                }
+
                 if (File.Exists(ConfigPath))
                 {
                     string json = File.ReadAllText(ConfigPath);
@@ -49,6 +58,7 @@ namespace AntigravityWidget.Services
         {
             try
             {
+                Directory.CreateDirectory(ConfigDir);
                 var options = new JsonSerializerOptions { WriteIndented = true };
                 string json = JsonSerializer.Serialize(config, options);
                 File.WriteAllText(ConfigPath, json);

@@ -3,6 +3,7 @@ using System.Drawing;
 using System.Threading;
 using System.Windows;
 using System.Windows.Forms;
+using AntigravityWidget.Services;
 using Application = System.Windows.Application;
 using MessageBox = System.Windows.MessageBox;
 
@@ -12,12 +13,14 @@ namespace AntigravityWidget
     {
         private const string MutexName = "AntigravityWidgetMutex_SingleInstance";
         private Mutex? _mutex;
+        private bool _ownsMutex;
         private NotifyIcon? _notifyIcon;
         private MainWindow? _mainWindow;
 
         protected override void OnStartup(StartupEventArgs e)
         {
             _mutex = new Mutex(true, MutexName, out bool createdNew);
+            _ownsMutex = createdNew;
             if (!createdNew)
             {
                 MessageBox.Show("Antigravity Widget ya se encuentra en ejecución.", "Antigravity Widget", MessageBoxButton.OK, MessageBoxImage.Information);
@@ -71,10 +74,28 @@ namespace AntigravityWidget
 
             var contextMenu = new ContextMenuStrip();
             contextMenu.Items.Add("Preferencias...", null, (s, e) => _mainWindow?.OpenSettings());
+
+            var ghostItem = new ToolStripMenuItem("Modo Fantasma (Click-Through)");
+            ghostItem.Click += (s, e) =>
+            {
+                if (_mainWindow != null)
+                {
+                    _mainWindow.Config.ClickThrough = !_mainWindow.Config.ClickThrough;
+                    _mainWindow.ApplyConfig();
+                    ConfigService.Save(_mainWindow.Config);
+                }
+            };
+            contextMenu.Items.Add(ghostItem);
+
             contextMenu.Items.Add("Centrar en Pantalla", null, (s, e) => _mainWindow?.CenterOnScreen());
             contextMenu.Items.Add("Actualizar Métricas", null, (s, e) => _mainWindow?.RefreshDataAsync());
             contextMenu.Items.Add(new ToolStripSeparator());
             contextMenu.Items.Add("Cerrar Widget", null, (s, e) => Shutdown());
+
+            contextMenu.Opening += (s, e) =>
+            {
+                ghostItem.Checked = _mainWindow?.Config.ClickThrough ?? false;
+            };
 
             _notifyIcon.ContextMenuStrip = contextMenu;
             _notifyIcon.DoubleClick += (s, e) =>
@@ -97,7 +118,10 @@ namespace AntigravityWidget
 
             if (_mutex != null)
             {
-                _mutex.ReleaseMutex();
+                if (_ownsMutex)
+                {
+                    try { _mutex.ReleaseMutex(); } catch (ApplicationException) { }
+                }
                 _mutex.Dispose();
             }
 

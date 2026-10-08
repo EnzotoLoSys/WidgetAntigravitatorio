@@ -61,8 +61,15 @@ namespace AntigravityWidget
             }
         }
 
+        protected override void OnClosed(EventArgs e)
+        {
+            base.OnClosed(e);
+            ConfigService.Save(_cfg);
+        }
+
         private void OnCloseClick(object sender, RoutedEventArgs e)
         {
+            ConfigService.Save(_cfg);
             Close();
         }
 

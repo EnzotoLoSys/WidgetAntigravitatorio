@@ -48,11 +48,13 @@ namespace AntigravityWidget
         {
             if (Config.Left.HasValue && Config.Top.HasValue)
             {
-                double screenWidth = SystemParameters.PrimaryScreenWidth;
-                double screenHeight = SystemParameters.PrimaryScreenHeight;
+                double vLeft = SystemParameters.VirtualScreenLeft;
+                double vTop = SystemParameters.VirtualScreenTop;
+                double vWidth = SystemParameters.VirtualScreenWidth;
+                double vHeight = SystemParameters.VirtualScreenHeight;
 
-                if (Config.Left.Value >= 0 && Config.Left.Value < screenWidth - 40 &&
-                    Config.Top.Value >= 0 && Config.Top.Value < screenHeight - 40)
+                if (Config.Left.Value >= vLeft - 100 && Config.Left.Value < (vLeft + vWidth - 40) &&
+                    Config.Top.Value >= vTop - 20 && Config.Top.Value < (vTop + vHeight - 40))
                 {
                     this.WindowStartupLocation = WindowStartupLocation.Manual;
                     this.Left = Config.Left.Value;
@@ -237,6 +239,13 @@ namespace AntigravityWidget
             {
                 QuotaData data = await QuotaService.CalculateAsync();
                 UpdateUiWithData(data);
+
+                // Backoff interval: 3s if live language server connected, 10s if offline/estimate
+                var targetInterval = data.IsLiveApi ? TimeSpan.FromSeconds(3) : TimeSpan.FromSeconds(10);
+                if (_timer.Interval != targetInterval)
+                {
+                    _timer.Interval = targetInterval;
+                }
             }
             catch { }
             finally

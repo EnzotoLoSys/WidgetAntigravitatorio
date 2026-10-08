@@ -14,13 +14,14 @@ namespace AntigravityWidget.Services
 {
     public class QuotaData
     {
+        public bool IsLiveApi { get; set; } = false;
         public int Count5h { get; set; }
         public int CountWeekly { get; set; }
         public int Remain5hPct { get; set; } = 100;
         public int RemainWeeklyPct { get; set; } = 100;
         public string Reset5hText { get; set; } = "~1h 12m";
         public string WeeklyDetailsText { get; set; } = "186 prompts";
-        public string ContextTokensText { get; set; } = "1k (0.1%)";
+        public string ContextTokensText { get; set; } = "1k (~0.1%)";
         public double ContextPct { get; set; } = 0.1;
         public string ModelGroupName { get; set; } = "Gemini Models";
     }
@@ -88,25 +89,11 @@ namespace AntigravityWidget.Services
 
                 if (processes.Count == 0) return false;
 
-                // Discover active local listening ports
-                var listeningPorts = new HashSet<int>();
-                try
-                {
-                    var tcpListeners = IPGlobalProperties.GetIPGlobalProperties().GetActiveTcpListeners();
-                    foreach (var ep in tcpListeners)
-                    {
-                        if (ep.Port > 1024)
-                        {
-                            listeningPorts.Add(ep.Port);
-                        }
-                    }
-                }
-                catch { }
-
-                // Test ports against active language server CSRFs
+                // Each token is only ever tried against the ports owned by the
+                // language server process that actually holds it.
                 foreach (var proc in processes)
                 {
-                    foreach (var port in listeningPorts)
+                    foreach (var port in Native.Win32.GetListeningPortsForPid(proc.Pid))
                     {
                         if (await FetchQuotaJsonAsync(port, proc.Csrf, data))
                         {
@@ -223,6 +210,7 @@ namespace AntigravityWidget.Services
                                 }
                             }
                         }
+                        data.IsLiveApi = true;
                         return true;
                     }
                 }
@@ -277,7 +265,7 @@ namespace AntigravityWidget.Services
                 double ctxPct = Math.Round(((double)contextTokens / maxContext) * 100.0, 1);
                 data.ContextPct = Math.Clamp(ctxPct, 0.1, 100.0);
                 string tokenStr = contextTokens >= 1000 ? $"{(contextTokens / 1000.0):0.#}k" : contextTokens.ToString();
-                data.ContextTokensText = $"{tokenStr} ({ctxPct}%)";
+                data.ContextTokensText = $"{tokenStr} (~{ctxPct}%)";
 
                 // Count prompts
                 int count5h = 0;
@@ -316,6 +304,7 @@ namespace AntigravityWidget.Services
 
         private static void CalculateFallbackQuota(QuotaData data)
         {
+            data.IsLiveApi = false;
             const double max5hRequests = 90.0;
             double used5hPct = Math.Min(100.0, (data.Count5h / max5hRequests) * 100.0);
             data.Remain5hPct = Math.Clamp((int)Math.Round(100.0 - used5hPct), 0, 100);
@@ -323,7 +312,9 @@ namespace AntigravityWidget.Services
             const double maxWeekly = 500.0;
             double usedWeeklyPct = Math.Min(100.0, (data.CountWeekly / maxWeekly) * 100.0);
             data.RemainWeeklyPct = Math.Clamp((int)Math.Round(100.0 - usedWeeklyPct), 0, 100);
-            data.Reset5hText = $"~1h ({data.Count5h} p)";
+            data.Reset5hText = $"~Est. ({data.Count5h} p)";
+            data.WeeklyDetailsText = $"~Est. ({data.CountWeekly} p)";
+            data.ModelGroupName = "IDE desconectado";
         }
     }
 }
