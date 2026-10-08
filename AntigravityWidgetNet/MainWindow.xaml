@@ -24,16 +24,102 @@
             <Setter Property="IsHitTestVisible" Value="False"/>
         </Style>
         
+        <!-- Dark ContextMenu Style -->
         <Style TargetType="ContextMenu">
-            <Setter Property="Background" Value="#0F172A"/>
-            <Setter Property="BorderBrush" Value="#334155"/>
-            <Setter Property="BorderThickness" Value="1"/>
-            <Setter Property="Foreground" Value="#E2E8F0"/>
-            <Setter Property="FontSize" Value="11"/>
+            <Setter Property="OverridesDefaultStyle" Value="True"/>
+            <Setter Property="SnapsToDevicePixels" Value="True"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ContextMenu">
+                        <Border Background="#0F172A" BorderBrush="#334155" BorderThickness="1.2" CornerRadius="8" Padding="4,4">
+                            <Border.Effect>
+                                <DropShadowEffect BlurRadius="16" ShadowDepth="4" Direction="270" Color="#000000" Opacity="0.85"/>
+                            </Border.Effect>
+                            <StackPanel IsItemsHost="True" KeyboardNavigation.DirectionalNavigation="Cycle"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
         </Style>
+
+        <!-- Dark Separator Style -->
+        <Style TargetType="Separator">
+            <Setter Property="OverridesDefaultStyle" Value="True"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Separator">
+                        <Border Height="1" Background="#334155" Margin="4,3,4,3"/>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- Dark MenuItem Style -->
         <Style TargetType="MenuItem">
+            <Setter Property="OverridesDefaultStyle" Value="True"/>
             <Setter Property="Foreground" Value="#E2E8F0"/>
-            <Setter Property="Background" Value="#0F172A"/>
+            <Setter Property="FontFamily" Value="Segoe UI, Segoe UI Variable, Arial"/>
+            <Setter Property="FontSize" Value="11"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="MenuItem">
+                        <Grid x:Name="GridItem">
+                            <Border x:Name="BgBorder" Background="Transparent" CornerRadius="5" Margin="2,1" Height="26">
+                                <Grid Margin="8,0,8,0">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="18"/>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="16"/>
+                                    </Grid.ColumnDefinitions>
+
+                                    <!-- Checkmark Icon -->
+                                    <TextBlock x:Name="CheckGlyph" Grid.Column="0" Text="✓" FontSize="11" FontWeight="Bold" 
+                                               Foreground="#38BDF8" VerticalAlignment="Center" HorizontalAlignment="Left" Visibility="Collapsed"/>
+
+                                    <!-- Header Text -->
+                                    <ContentPresenter Grid.Column="1" ContentSource="Header" VerticalAlignment="Center" Margin="2,0,8,0"/>
+
+                                    <!-- Arrow for Submenu -->
+                                    <TextBlock x:Name="ArrowGlyph" Grid.Column="2" Text="›" FontSize="12" FontWeight="Bold" 
+                                               Foreground="#64748B" VerticalAlignment="Center" HorizontalAlignment="Right" Visibility="Collapsed"/>
+                                </Grid>
+                            </Border>
+
+                            <!-- Submenu Popup -->
+                            <Popup x:Name="SubMenuPopup" AllowsTransparency="True" Placement="Right" 
+                                   IsOpen="{Binding IsSubmenuOpen, RelativeSource={RelativeSource TemplatedParent}}" Focusable="False">
+                                <Border Background="#0F172A" BorderBrush="#334155" BorderThickness="1.2" CornerRadius="8" Padding="4,4" Margin="2">
+                                    <Border.Effect>
+                                        <DropShadowEffect BlurRadius="16" ShadowDepth="4" Direction="270" Color="#000000" Opacity="0.85"/>
+                                    </Border.Effect>
+                                    <StackPanel IsItemsHost="True" KeyboardNavigation.DirectionalNavigation="Cycle"/>
+                                </Border>
+                            </Popup>
+                        </Grid>
+
+                        <ControlTemplate.Triggers>
+                            <!-- Highlight (Hover) -->
+                            <Trigger Property="IsHighlighted" Value="True">
+                                <Setter TargetName="BgBorder" Property="Background" Value="#1E293B"/>
+                                <Setter Property="Foreground" Value="#FFFFFF"/>
+                            </Trigger>
+                            <!-- Submenu Open -->
+                            <Trigger Property="IsSubmenuOpen" Value="True">
+                                <Setter TargetName="BgBorder" Property="Background" Value="#1E293B"/>
+                            </Trigger>
+                            <!-- Has Submenu Items -->
+                            <Trigger Property="HasItems" Value="True">
+                                <Setter TargetName="ArrowGlyph" Property="Visibility" Value="Visible"/>
+                            </Trigger>
+                            <!-- Is Checked -->
+                            <Trigger Property="IsChecked" Value="True">
+                                <Setter TargetName="CheckGlyph" Property="Visibility" Value="Visible"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
         </Style>
     </Window.Resources>
 

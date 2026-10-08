@@ -1,0 +1,21 @@
+## Build artifacts & binaries
+bin/
+obj/
+[Bb]in/
+[Oo]bj/
+*.exe
+*.dll
+*.pdb
+*.msi
+
+## Visual Studio / VS Code
+.vs/
+.vscode/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+## Runtime user data
+widget_config.json
+*.log
