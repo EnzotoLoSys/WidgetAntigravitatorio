@@ -10,9 +10,7 @@
     <AssemblyName>AntigravityWidget</AssemblyName>
     <RootNamespace>AntigravityWidget</RootNamespace>
     <PublishSingleFile>true</PublishSingleFile>
-    <SelfContained>true</SelfContained>
-    <RuntimeIdentifier>win-x64</RuntimeIdentifier>
-    <IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
+    <SelfContained>false</SelfContained>
   </PropertyGroup>
 
   <ItemGroup>
