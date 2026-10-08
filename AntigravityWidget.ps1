@@ -1,4 +1,4 @@
-Add-Type -AssemblyName PresentationFramework, PresentationCore, WindowsBase, System.Windows.Forms
+Add-Type -AssemblyName PresentationFramework, PresentationCore, WindowsBase, System.Windows.Forms, System.Drawing
 
 # Win32 Window Tools (Click-Through)
 if (-not ([System.Management.Automation.PSTypeName]'Win32WindowTools').Type) {
@@ -77,14 +77,14 @@ $widgetXaml = @'
         <!-- Main Card Border (Snug & Ultra-Compact) -->
         <Border Name="MainBorder" CornerRadius="10" BorderThickness="1.2" Cursor="SizeAll">
             <Border.BorderBrush>
-                <LinearGradientBrush Name="BorderBrushGrad" StartPoint="0,0" EndPoint="1,1" Opacity="1.0">
+                <LinearGradientBrush StartPoint="0,0" EndPoint="1,1" Opacity="1.0">
                     <GradientStop Color="#60A5FA" Offset="0.0"/>
                     <GradientStop Color="#1E293B" Offset="0.5"/>
                     <GradientStop Color="#00F2FE" Offset="1.0"/>
                 </LinearGradientBrush>
             </Border.BorderBrush>
             <Border.Background>
-                <SolidColorBrush Name="BgBrush" Color="#0B0F19" Opacity="0.90"/>
+                <SolidColorBrush Color="#0B0F19" Opacity="0.90"/>
             </Border.Background>
             <Border.Effect>
                 <DropShadowEffect BlurRadius="10" ShadowDepth="2" Direction="270" Color="#000000" Opacity="0.85"/>
@@ -446,8 +446,6 @@ $settingsWindow = [System.Windows.Markup.XamlReader]::Load($readerSettings)
 
 # Widget UI Handles
 $mainBorder = $window.FindName("MainBorder")
-$borderBrushGrad = $window.FindName("BorderBrushGrad")
-$bgBrush = $window.FindName("BgBrush")
 $rootContainer = $window.FindName("RootContainer")
 $uiScale = $window.FindName("UiScale")
 $viewBars = $window.FindName("ViewBars")
@@ -921,6 +919,8 @@ $script:isDragging = $false
 $script:startScreenPos = [System.Drawing.Point]::new(0, 0)
 $script:startWindowLeft = 0
 $script:startWindowTop = 0
+$script:dpiScaleX = 1.0
+$script:dpiScaleY = 1.0
 
 $mainBorder.Add_MouseLeftButtonDown({
         if (-not $script:isClickThrough) {
@@ -928,6 +928,14 @@ $mainBorder.Add_MouseLeftButtonDown({
             $script:startScreenPos = [System.Windows.Forms.Cursor]::Position
             $script:startWindowLeft = $window.Left
             $script:startWindowTop = $window.Top
+            try {
+                $dpi = [System.Windows.Media.VisualTreeHelper]::GetDpi($window)
+                $script:dpiScaleX = [double]$dpi.DpiScaleX
+                $script:dpiScaleY = [double]$dpi.DpiScaleY
+            } catch {
+                $script:dpiScaleX = 1.0
+                $script:dpiScaleY = 1.0
+            }
             $mainBorder.CaptureMouse() | Out-Null
         }
     })
@@ -935,8 +943,10 @@ $mainBorder.Add_MouseLeftButtonDown({
 $mainBorder.Add_MouseMove({
         if ($script:isDragging) {
             $cur = [System.Windows.Forms.Cursor]::Position
-            $deltaX = $cur.X - $script:startScreenPos.X
-            $deltaY = $cur.Y - $script:startScreenPos.Y
+            $scaleX = if ($script:dpiScaleX -gt 0) { $script:dpiScaleX } else { 1.0 }
+            $scaleY = if ($script:dpiScaleY -gt 0) { $script:dpiScaleY } else { 1.0 }
+            $deltaX = ($cur.X - $script:startScreenPos.X) / $scaleX
+            $deltaY = ($cur.Y - $script:startScreenPos.Y) / $scaleY
             $window.Left = $script:startWindowLeft + $deltaX
             $window.Top = $script:startWindowTop + $deltaY
         }
@@ -1281,117 +1291,11 @@ function Update-WidgetData {
         # Context Gauge ring
         $dCtx = [Math]::Max(0.1, [Math]::Min(31.4, ($contextPct / 100.0) * 31.416))
         $gaugeContextRing.StrokeDashArray = [System.Windows.Media.DoubleCollection]::new(@($dCtx, 40))
-        $contextTokens = 3000
-        if ($latestTranscript) {
-            $fileSize = $latestTranscript.Length
-            $contextTokens = [Math]::Max(1000, [int]($fileSize / 4))
-        }
         
-        $maxContext = 1000000
-        $contextPct = [Math]::Round(($contextTokens / $maxContext) * 100, 1)
-        $progContext.Value = [Math]::Min(100, [Math]::Max(1, $contextPct))
+        $notifyIcon.Text = "Antigravity (5h: " + [string]$remain5hPct + "% | Sem: " + [string]$remainWeeklyPct + "%)"
         
-        if ($contextTokens -ge 1000) {
-            $tokenStr = "$([Math]::Round($contextTokens / 1000, 1))k"
-        }
-        else {
-            $tokenStr = "$contextTokens"
-        }
-        $txtContextTokens.Text = "$tokenStr ($contextPct%)"
-        $txtGaugeContextVal.Text = "$contextPct%"
-        
-        # 2. Calculate rolling 5-hour usage
-        $fiveHoursAgo = $now.AddHours(-5)
-        $weeklyAgo = $now.AddDays(-7)
-        
-        $recentCount5h = 0
-        $recentCountWeekly = 0
-        
-        foreach ($dir in $candidateGeminiDirs) {
-            $hPath = "$dir\history.jsonl"
-            if (Test-Path $hPath) {
-                $lines = Get-Content $hPath -Tail 300 -ErrorAction SilentlyContinue
-                foreach ($line in $lines) {
-                    if ($line -match '"timestamp":(\d+)') {
-                        $ts = [long]$matches[1]
-                        $entryDate = [DateTimeOffset]::FromUnixTimeMilliseconds($ts).UtcDateTime
-                        if ($entryDate -ge $fiveHoursAgo) {
-                            $recentCount5h++
-                        }
-                        if ($entryDate -ge $weeklyAgo) {
-                            $recentCountWeekly++
-                        }
-                    }
-                }
-            }
-        }
-        
-        # 5-hour quota estimate
-        $max5hRequests = 50
-        $used5hPct = [Math]::Min(100, ($recentCount5h / $max5hRequests) * 100)
-        $remain5hPct = [Math]::Max(0, 100 - [int]$used5hPct)
-        
-        $prog5h.Value = $remain5hPct
-        $txt5hPct.Text = "$remain5hPct%"
-        $txtGauge5hVal.Text = "$remain5hPct%"
-        
-        if ($remain5hPct -ge 50) {
-            $txt5hPct.Foreground = [System.Windows.Media.BrushConverter]::new().ConvertFromString("#4ADE80")
-            $txtGauge5hVal.Foreground = [System.Windows.Media.BrushConverter]::new().ConvertFromString("#4ADE80")
-        }
-        elseif ($remain5hPct -ge 20) {
-            $txt5hPct.Foreground = [System.Windows.Media.BrushConverter]::new().ConvertFromString("#FACC15")
-            $txtGauge5hVal.Foreground = [System.Windows.Media.BrushConverter]::new().ConvertFromString("#FACC15")
-        }
-        else {
-            $txt5hPct.Foreground = [System.Windows.Media.BrushConverter]::new().ConvertFromString("#F87171")
-            $txtGauge5hVal.Foreground = [System.Windows.Media.BrushConverter]::new().ConvertFromString("#F87171")
-        }
-        
-        $nextResetMin = 60 - ($now.Minute % 60)
-        $txt5hReset.Text = "~$($nextResetMin)m ($recentCount5h p)"
-        
-        # Weekly quota estimate
-        $maxWeekly = 500
-        $usedWeeklyPct = [Math]::Min(100, ($recentCountWeekly / $maxWeekly) * 100)
-        $remainWeeklyPct = [Math]::Max(0, 100 - [int]$usedWeeklyPct)
-        
-        $progWeekly.Value = $remainWeeklyPct
-        $txtWeeklyPct.Text = "$remainWeeklyPct%"
-        $txtGaugeWeeklyVal.Text = "$remainWeeklyPct%"
-        $txtWeeklyDetails.Text = "$recentCountWeekly prompts"
-        
-        $timeStr = (Get-Date).ToString("HH:mm:ss")
-        $txtLastUpdate.Text = "Sync: $timeStr"
-        $notifyIcon.Text = "Antigravity (5h: $remain5hPct% | Sem: $remainWeeklyPct%)"
-        $txt5hPct.Foreground = [System.Windows.Media.BrushConverter]::new().ConvertFromString("#FACC15")
-        $txtGauge5hVal.Foreground = [System.Windows.Media.BrushConverter]::new().ConvertFromString("#FACC15")
     }
-    else {
-        $txt5hPct.Foreground = [System.Windows.Media.BrushConverter]::new().ConvertFromString("#F87171")
-        $txtGauge5hVal.Foreground = [System.Windows.Media.BrushConverter]::new().ConvertFromString("#F87171")
-    }
-        
-    $nextResetMin = 60 - ($now.Minute % 60)
-    $txt5hReset.Text = "Proximo refresco en: ~$($nextResetMin)m ($recentCount5h prompts en 5h)"
-        
-    # Weekly quota estimate
-    $maxWeekly = 500
-    $usedWeeklyPct = [Math]::Min(100, ($recentCountWeekly / $maxWeekly) * 100)
-    $remainWeeklyPct = [Math]::Max(0, 100 - [int]$usedWeeklyPct)
-        
-    $progWeekly.Value = $remainWeeklyPct
-    $txtWeeklyPct.Text = "$remainWeeklyPct% disp."
-    $txtGaugeWeeklyVal.Text = "$remainWeeklyPct%"
-    $txtWeeklyDetails.Text = "$recentCountWeekly prompts esta semana"
-        
-    $timeStr = (Get-Date).ToString("HH:mm:ss")
-    $txtLastUpdate.Text = "Sync: $timeStr"
-        
-}
-catch {
-    $txtLastUpdate.Text = "Sync: OK"
-}
+    catch { }
 }
 
 # Initial trigger
