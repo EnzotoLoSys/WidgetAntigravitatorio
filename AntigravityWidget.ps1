@@ -1,6 +1,6 @@
 Add-Type -AssemblyName PresentationFramework, PresentationCore, WindowsBase, System.Windows.Forms, System.Drawing
 
-# Win32 Window Tools (Drag & Click-Through)
+# Win32 Window Tools (Click-Through)
 if (-not ([System.Management.Automation.PSTypeName]'Win32WindowTools').Type) {
     Add-Type -TypeDefinition @'
 using System;
@@ -9,14 +9,6 @@ using System.Runtime.InteropServices;
 public class Win32WindowTools {
     public const int GWL_EXSTYLE = -20;
     public const int WS_EX_TRANSPARENT = 0x00000020;
-    public const int WM_NCLBUTTONDOWN = 0xA1;
-    public const int HTCAPTION = 0x2;
-
-    [DllImport("user32.dll")]
-    public static extern bool ReleaseCapture();
-
-    [DllImport("user32.dll")]
-    public static extern IntPtr SendMessage(IntPtr hWnd, int Msg, int wParam, int lParam);
 
     [DllImport("user32.dll", SetLastError = true)]
     public static extern int GetWindowLong(IntPtr hWnd, int nIndex);
@@ -32,11 +24,6 @@ public class Win32WindowTools {
             SetWindowLong(hWnd, GWL_EXSTYLE, exStyle & ~WS_EX_TRANSPARENT);
         }
     }
-
-    public static void DragWindow(IntPtr hWnd) {
-        ReleaseCapture();
-        SendMessage(hWnd, WM_NCLBUTTONDOWN, HTCAPTION, 0);
-    }
 }
 '@
 }
@@ -45,8 +32,8 @@ $xaml = @'
 <Window xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="Antigravity Widget"
-        Width="185"
-        SizeToContent="Height"
+        SizeToContent="WidthAndHeight"
+        ResizeMode="NoResize"
         WindowStyle="None"
         AllowsTransparency="True"
         Background="Transparent"
@@ -93,7 +80,7 @@ $xaml = @'
             <ScaleTransform x:Name="UiScale" ScaleX="1.0" ScaleY="1.0"/>
         </Grid.LayoutTransform>
 
-        <!-- Main Card Border (Snug, Ultra-Compact & Right-Click Context Menu) -->
+        <!-- Main Card Border (Ultra-Snug, No Wasted Space) -->
         <Border Name="MainBorder" CornerRadius="10" BorderThickness="1.2" Cursor="SizeAll">
             <Border.BorderBrush>
                 <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
@@ -109,7 +96,7 @@ $xaml = @'
                 <DropShadowEffect BlurRadius="10" ShadowDepth="2" Direction="270" Color="#000000" Opacity="0.85"/>
             </Border.Effect>
 
-            <!-- Right-Click Menu attached directly to the visible card -->
+            <!-- Right-Click Menu -->
             <Border.ContextMenu>
                 <ContextMenu Name="WidgetContextMenu">
                     <MenuItem Header="Cambiar Vista">
@@ -127,11 +114,11 @@ $xaml = @'
                 </ContextMenu>
             </Border.ContextMenu>
 
-            <StackPanel Margin="7,6,7,6">
+            <StackPanel Margin="6,5,6,5">
                 <!-- ================= VISTA 1: BARRAS COMPACTAS ================= -->
-                <StackPanel Name="ViewBars" Visibility="Visible">
+                <StackPanel Name="ViewBars" Visibility="Visible" Width="175">
                     <!-- 5-Hour Rolling Limit -->
-                    <StackPanel Name="Row5h" Margin="0,0,0,4">
+                    <StackPanel Name="Row5h" Margin="0,0,0,3.5">
                         <Grid Margin="0,0,0,1">
                             <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                                 <Ellipse Width="4" Height="4" Fill="#06B6D4" Margin="0,0,3,0"/>
@@ -154,7 +141,7 @@ $xaml = @'
                     </StackPanel>
 
                     <!-- Weekly Quota -->
-                    <StackPanel Name="RowWeekly" Margin="0,0,0,4">
+                    <StackPanel Name="RowWeekly" Margin="0,0,0,3.5">
                         <Grid Margin="0,0,0,1">
                             <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                                 <Ellipse Width="4" Height="4" Fill="#3B82F6" Margin="0,0,3,0"/>
@@ -199,19 +186,19 @@ $xaml = @'
                     </StackPanel>
                 </StackPanel>
 
-                <!-- ================= VISTA 2: TACOMETROS RADIALES ================= -->
-                <Grid Name="ViewGauges" Visibility="Collapsed" Margin="0,1,0,1">
+                <!-- ================= VISTA 2: TACOMETROS RADIALES (SNUG & TIGHT) ================= -->
+                <Grid Name="ViewGauges" Visibility="Collapsed" Margin="0">
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*" Name="ColGauge5h"/>
-                        <ColumnDefinition Width="*" Name="ColGaugeWeekly"/>
-                        <ColumnDefinition Width="*" Name="ColGaugeContext"/>
+                        <ColumnDefinition Width="Auto" Name="ColGauge5h"/>
+                        <ColumnDefinition Width="Auto" Name="ColGaugeWeekly"/>
+                        <ColumnDefinition Width="Auto" Name="ColGaugeContext"/>
                     </Grid.ColumnDefinitions>
 
                     <!-- Gauge 1: 5H -->
-                    <StackPanel Grid.Column="0" Name="GaugeItem5h" HorizontalAlignment="Center">
+                    <StackPanel Grid.Column="0" Name="GaugeItem5h" Margin="2,0,3,0" HorizontalAlignment="Center">
                         <Grid Width="46" Height="46">
                             <Ellipse Stroke="#1E293B" StrokeThickness="4"/>
-                            <Ellipse Name="Gauge5hRing" Stroke="#10B981" StrokeThickness="4" StrokeDashArray="70 30" RenderTransformOrigin="0.5,0.5">
+                            <Ellipse Name="Gauge5hRing" Stroke="#10B981" StrokeThickness="4" StrokeDashArray="21.3 40" RenderTransformOrigin="0.5,0.5">
                                 <Ellipse.RenderTransform><RotateTransform Angle="-90"/></Ellipse.RenderTransform>
                             </Ellipse>
                             <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
@@ -222,10 +209,10 @@ $xaml = @'
                     </StackPanel>
 
                     <!-- Gauge 2: Weekly -->
-                    <StackPanel Grid.Column="1" Name="GaugeItemWeekly" HorizontalAlignment="Center">
+                    <StackPanel Grid.Column="1" Name="GaugeItemWeekly" Margin="3,0,3,0" HorizontalAlignment="Center">
                         <Grid Width="46" Height="46">
                             <Ellipse Stroke="#1E293B" StrokeThickness="4"/>
-                            <Ellipse Name="GaugeWeeklyRing" Stroke="#38BDF8" StrokeThickness="4" StrokeDashArray="80 20" RenderTransformOrigin="0.5,0.5">
+                            <Ellipse Name="GaugeWeeklyRing" Stroke="#38BDF8" StrokeThickness="4" StrokeDashArray="29.5 40" RenderTransformOrigin="0.5,0.5">
                                 <Ellipse.RenderTransform><RotateTransform Angle="-90"/></Ellipse.RenderTransform>
                             </Ellipse>
                             <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
@@ -236,10 +223,10 @@ $xaml = @'
                     </StackPanel>
 
                     <!-- Gauge 3: Context -->
-                    <StackPanel Grid.Column="2" Name="GaugeItemContext" HorizontalAlignment="Center">
+                    <StackPanel Grid.Column="2" Name="GaugeItemContext" Margin="3,0,2,0" HorizontalAlignment="Center">
                         <Grid Width="46" Height="46">
                             <Ellipse Stroke="#1E293B" StrokeThickness="4"/>
-                            <Ellipse Name="GaugeContextRing" Stroke="#A855F7" StrokeThickness="4" StrokeDashArray="20 80" RenderTransformOrigin="0.5,0.5">
+                            <Ellipse Name="GaugeContextRing" Stroke="#A855F7" StrokeThickness="4" StrokeDashArray="2.0 40" RenderTransformOrigin="0.5,0.5">
                                 <Ellipse.RenderTransform><RotateTransform Angle="-90"/></Ellipse.RenderTransform>
                             </Ellipse>
                             <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
@@ -250,8 +237,8 @@ $xaml = @'
                     </StackPanel>
                 </Grid>
 
-                <!-- ================= VISTA 3: SOLO PORCENTAJES (CHIPS ULTRA-MICRO) ================= -->
-                <Grid Name="ViewChips" Visibility="Collapsed" Margin="0,1,0,1">
+                <!-- ================= VISTA 3: SOLO PORCENTAJES (CHIPS) ================= -->
+                <Grid Name="ViewChips" Visibility="Collapsed" Width="175" Margin="0">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*" Name="ColChip5h"/>
                         <ColumnDefinition Width="*" Name="ColChipWeekly"/>
@@ -284,7 +271,7 @@ $xaml = @'
                 </Grid>
 
                 <!-- ================= VISTA 4: PANEL DE OPCIONES ================= -->
-                <StackPanel Name="ViewSettings" Visibility="Collapsed" Margin="0,1,0,1">
+                <StackPanel Name="ViewSettings" Visibility="Collapsed" Width="175" Margin="0,1,0,1">
                     <TextBlock Text="MODO VISUAL" FontSize="7.5" FontWeight="Bold" Foreground="#38BDF8" Margin="0,0,0,2"/>
                     <Grid Margin="0,0,0,4">
                         <Grid.ColumnDefinitions>
@@ -582,23 +569,39 @@ if (Test-Path $configFile) {
     Set-WidgetMode "Bars"
 }
 
-# Native Unconditional Drag via Win32 (100% reliable on left click)
-$dragHandler = {
+# Smooth Delta-based Mouse Dragging (Does NOT trigger Windows 11 Snap Assist / Quarter Screen Snap!)
+$script:isDragging = $false
+$script:startScreenPos = [System.Drawing.Point]::new(0,0)
+$script:startWindowLeft = 0
+$script:startWindowTop = 0
+
+$mainBorder.Add_MouseLeftButtonDown({
     if (-not $script:isClickThrough) {
-        try {
-            $helper = [System.Windows.Interop.WindowInteropHelper]::new($window)
-            $hwnd = $helper.Handle
-            if ($hwnd -ne [IntPtr]::Zero) {
-                [Win32WindowTools]::DragWindow($hwnd)
-                Save-WidgetConfig
-            } else {
-                $window.DragMove()
-                Save-WidgetConfig
-            }
-        } catch {}
+        $script:isDragging = $true
+        $script:startScreenPos = [System.Windows.Forms.Cursor]::Position
+        $script:startWindowLeft = $window.Left
+        $script:startWindowTop = $window.Top
+        $mainBorder.CaptureMouse() | Out-Null
     }
-}
-$mainBorder.Add_MouseLeftButtonDown($dragHandler)
+})
+
+$mainBorder.Add_MouseMove({
+    if ($script:isDragging) {
+        $cur = [System.Windows.Forms.Cursor]::Position
+        $deltaX = $cur.X - $script:startScreenPos.X
+        $deltaY = $cur.Y - $script:startScreenPos.Y
+        $window.Left = $script:startWindowLeft + $deltaX
+        $window.Top = $script:startWindowTop + $deltaY
+    }
+})
+
+$mainBorder.Add_MouseLeftButtonUp({
+    if ($script:isDragging) {
+        $script:isDragging = $false
+        $mainBorder.ReleaseMouseCapture()
+        Save-WidgetConfig
+    }
+})
 
 function Toggle-Pin {
     $window.Topmost = -not $window.Topmost
@@ -871,9 +874,9 @@ function Update-WidgetData {
         $txtGauge5hVal.Text = [string]$remain5hPct + "%"
         $txtChip5h.Text = [string]$remain5hPct + "%"
         
-        # Radial Gauge ring update
-        $d5h = [Math]::Max(1, [int]($remain5hPct * 1.25))
-        $gauge5hRing.StrokeDashArray = [System.Windows.Media.DoubleCollection]::new(@($d5h, 126))
+        # Exact Radial Gauge ring calculation (Perimeter in stroke units = 31.416)
+        $d5h = [Math]::Max(0.1, [Math]::Min(31.4, ($remain5hPct / 100.0) * 31.416))
+        $gauge5hRing.StrokeDashArray = [System.Windows.Media.DoubleCollection]::new(@($d5h, 40))
 
         if ($remain5hPct -ge 50) {
             $colorHex = "#4ADE80"
@@ -901,13 +904,13 @@ function Update-WidgetData {
         $txtGaugeWeeklyVal.Text = [string]$remainWeeklyPct + "%"
         $txtChipWeekly.Text = [string]$remainWeeklyPct + "%"
         
-        $dWeekly = [Math]::Max(1, [int]($remainWeeklyPct * 1.25))
-        $gaugeWeeklyRing.StrokeDashArray = [System.Windows.Media.DoubleCollection]::new(@($dWeekly, 126))
+        $dWeekly = [Math]::Max(0.1, [Math]::Min(31.4, ($remainWeeklyPct / 100.0) * 31.416))
+        $gaugeWeeklyRing.StrokeDashArray = [System.Windows.Media.DoubleCollection]::new(@($dWeekly, 40))
         $txtWeeklyDetails.Text = [string]$recentCountWeekly + " prompts"
         
         # Context Gauge ring
-        $dCtx = [Math]::Max(1, [int]($contextPct * 1.25))
-        $gaugeContextRing.StrokeDashArray = [System.Windows.Media.DoubleCollection]::new(@($dCtx, 126))
+        $dCtx = [Math]::Max(0.1, [Math]::Min(31.4, ($contextPct / 100.0) * 31.416))
+        $gaugeContextRing.StrokeDashArray = [System.Windows.Media.DoubleCollection]::new(@($dCtx, 40))
         
         $notifyIcon.Text = "Antigravity (5h: " + [string]$remain5hPct + "% | Sem: " + [string]$remainWeeklyPct + "%)"
         
