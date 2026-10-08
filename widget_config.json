@@ -1,14 +1,14 @@
 {
     "Opacity":  0.1,
     "Scale":  1,
-    "Mode":  "Gauges",
+    "Mode":  "Chips",
     "Orientation":  "Vertical",
-    "Left":  1469.6000000000001,
-    "Top":  131.20000000000002,
+    "Left":  1466.4,
+    "Top":  158.8,
     "Pinned":  true,
     "Show5h":  true,
     "ShowWeekly":  true,
     "ShowContext":  true,
-    "ShowSubtitles":  true,
+    "ShowSubtitles":  false,
     "ClickThrough":  false
 }
