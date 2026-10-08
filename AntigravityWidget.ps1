@@ -28,7 +28,8 @@ public class Win32WindowTools {
 '@
 }
 
-$xaml = @'
+# ================= MAIN WIDGET XAML (PURE COMPACT GADGET) =================
+$widgetXaml = @'
 <Window xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="Antigravity Widget"
@@ -52,13 +53,6 @@ $xaml = @'
         </Style>
         <Style TargetType="Ellipse">
             <Setter Property="IsHitTestVisible" Value="False"/>
-        </Style>
-        <Style TargetType="CheckBox">
-            <Setter Property="FontFamily" Value="Segoe UI"/>
-            <Setter Property="Foreground" Value="#CBD5E1"/>
-            <Setter Property="FontSize" Value="9"/>
-            <Setter Property="Cursor" Value="Hand"/>
-            <Setter Property="Margin" Value="0,1,0,2"/>
         </Style>
         
         <!-- Native Dark Context Menu Style -->
@@ -108,9 +102,12 @@ $xaml = @'
                         <MenuItem Name="CtxOrientH" Header="Horizontal (Fila)"/>
                         <MenuItem Name="CtxOrientV" Header="Vertical (Columna)"/>
                     </MenuItem>
-                    <MenuItem Name="CtxSettings" Header="Opciones y Estilo"/>
+                    <MenuItem Name="CtxResetPos" Header="Restablecer Posicion (Centrar)"/>
+                    <Separator Background="#334155"/>
+                    <MenuItem Name="CtxAutoStart" Header="Iniciar con Windows" IsCheckable="True"/>
                     <MenuItem Name="CtxPin" Header="Siempre arriba" IsCheckable="True"/>
                     <MenuItem Name="CtxClickThrough" Header="Modo Fantasma (Click-Through)" IsCheckable="True"/>
+                    <MenuItem Name="CtxSettings" Header="Preferencias..."/>
                     <Separator Background="#334155"/>
                     <MenuItem Name="CtxRefresh" Header="Actualizar ahora"/>
                     <Separator Background="#334155"/>
@@ -261,105 +258,174 @@ $xaml = @'
                         </StackPanel>
                     </Border>
                 </StackPanel>
-
-                <!-- ================= VISTA 4: PANEL DE OPCIONES ================= -->
-                <StackPanel Name="ViewSettings" Visibility="Collapsed" Width="175" Margin="0,1,0,1">
-                    <TextBlock Text="MODO VISUAL" FontSize="7.5" FontWeight="Bold" Foreground="#38BDF8" Margin="0,0,0,2"/>
-                    <Grid Margin="0,0,0,3">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="*"/>
-                        </Grid.ColumnDefinitions>
-                        <Button Name="BtnStyleBars" Grid.Column="0" Content="Barras" Height="19" Margin="0,0,1,0"
-                                Background="#2563EB" Foreground="#FFFFFF" BorderThickness="0" FontSize="8" FontWeight="SemiBold">
-                            <Button.Resources><Style TargetType="Border"><Setter Property="CornerRadius" Value="3"/></Style></Button.Resources>
-                        </Button>
-                        <Button Name="BtnStyleGauges" Grid.Column="1" Content="Tacometros" Height="19" Margin="1,0,1,0"
-                                Background="#1E293B" Foreground="#94A3B8" BorderThickness="0" FontSize="8" FontWeight="SemiBold">
-                            <Button.Resources><Style TargetType="Border"><Setter Property="CornerRadius" Value="3"/></Style></Button.Resources>
-                        </Button>
-                        <Button Name="BtnStyleChips" Grid.Column="2" Content="Porcentajes" Height="19" Margin="1,0,0,0"
-                                Background="#1E293B" Foreground="#94A3B8" BorderThickness="0" FontSize="8" FontWeight="SemiBold">
-                            <Button.Resources><Style TargetType="Border"><Setter Property="CornerRadius" Value="3"/></Style></Button.Resources>
-                        </Button>
-                    </Grid>
-
-                    <TextBlock Text="ORIENTACION" FontSize="7.5" FontWeight="Bold" Foreground="#38BDF8" Margin="0,2,0,2"/>
-                    <Grid Margin="0,0,0,4">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="*"/>
-                        </Grid.ColumnDefinitions>
-                        <Button Name="BtnOrientH" Grid.Column="0" Content="Horizontal" Height="18" Margin="0,0,1,0"
-                                Background="#2563EB" Foreground="#FFFFFF" BorderThickness="0" FontSize="8" FontWeight="SemiBold">
-                            <Button.Resources><Style TargetType="Border"><Setter Property="CornerRadius" Value="3"/></Style></Button.Resources>
-                        </Button>
-                        <Button Name="BtnOrientV" Grid.Column="1" Content="Vertical" Height="18" Margin="1,0,0,0"
-                                Background="#1E293B" Foreground="#94A3B8" BorderThickness="0" FontSize="8" FontWeight="SemiBold">
-                            <Button.Resources><Style TargetType="Border"><Setter Property="CornerRadius" Value="3"/></Style></Button.Resources>
-                        </Button>
-                    </Grid>
-
-                    <CheckBox Name="ChkShow5h" Content="5 Horas" IsChecked="True"/>
-                    <CheckBox Name="ChkShowWeekly" Content="Semana" IsChecked="True"/>
-                    <CheckBox Name="ChkShowContext" Content="Contexto" IsChecked="True"/>
-                    <CheckBox Name="ChkShowSubtitles" Content="Subtitulos" IsChecked="True"/>
-                    <CheckBox Name="ChkPinSettings" Content="Siempre arriba" IsChecked="True"/>
-                    <CheckBox Name="ChkClickThrough" Content="Modo Fantasma (Click-Through)" IsChecked="False"/>
-
-                    <Grid Margin="0,2,0,1">
-                        <TextBlock Text="Opacidad" FontSize="8" Foreground="#94A3B8"/>
-                        <TextBlock Name="TxtOpacityVal" Text="90%" HorizontalAlignment="Right" FontSize="8" Foreground="#94A3B8"/>
-                    </Grid>
-                    <Slider Name="SliderOpacity" Minimum="0.10" Maximum="0.95" Value="0.90" SmallChange="0.05" LargeChange="0.1" Margin="0,0,0,2"/>
-
-                    <Grid Margin="0,1,0,1">
-                        <TextBlock Text="Zoom / Escala" FontSize="8" Foreground="#94A3B8"/>
-                        <TextBlock Name="TxtScaleVal" Text="100%" HorizontalAlignment="Right" FontSize="8" Foreground="#94A3B8"/>
-                    </Grid>
-                    <Slider Name="SliderScale" Minimum="0.60" Maximum="1.30" Value="1.0" SmallChange="0.05" LargeChange="0.1" Margin="0,0,0,3"/>
-
-                    <!-- Themes -->
-                    <Grid Margin="0,1,0,4">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="*"/>
-                        </Grid.ColumnDefinitions>
-                        <Button Name="BtnThemeCyan" Grid.Column="0" Content="Cyan" Height="16" Margin="0,0,1,0" Background="#0E7490" Foreground="#FFFFFF" BorderThickness="0" FontSize="7.5">
-                            <Button.Resources><Style TargetType="Border"><Setter Property="CornerRadius" Value="2"/></Style></Button.Resources>
-                        </Button>
-                        <Button Name="BtnThemePurple" Grid.Column="1" Content="Violet" Height="16" Margin="1,0,1,0" Background="#6B21A8" Foreground="#FFFFFF" BorderThickness="0" FontSize="7.5">
-                            <Button.Resources><Style TargetType="Border"><Setter Property="CornerRadius" Value="2"/></Style></Button.Resources>
-                        </Button>
-                        <Button Name="BtnThemeGreen" Grid.Column="2" Content="Matrix" Height="16" Margin="1,0,0,0" Background="#065F46" Foreground="#FFFFFF" BorderThickness="0" FontSize="7.5">
-                            <Button.Resources><Style TargetType="Border"><Setter Property="CornerRadius" Value="2"/></Style></Button.Resources>
-                        </Button>
-                    </Grid>
-
-                    <Button Name="BtnSaveSettings" Content="Guardar" Height="18"
-                            Background="#10B981" Foreground="#000000" FontWeight="Bold" BorderThickness="0" FontSize="8">
-                        <Button.Resources><Style TargetType="Border"><Setter Property="CornerRadius" Value="3"/></Style></Button.Resources>
-                    </Button>
-                </StackPanel>
             </StackPanel>
         </Border>
     </Grid>
 </Window>
 '@
 
-$reader = [System.Xml.XmlReader]::Create([System.IO.StringReader]$xaml)
-$window = [System.Windows.Markup.XamlReader]::Load($reader)
+# ================= STANDALONE SETTINGS WINDOW XAML =================
+$settingsXaml = @'
+<Window xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Preferencias - Antigravity Widget"
+        Width="320"
+        SizeToContent="Height"
+        ResizeMode="NoResize"
+        WindowStyle="None"
+        AllowsTransparency="True"
+        Background="Transparent"
+        Topmost="True"
+        WindowStartupLocation="CenterScreen">
+    
+    <Window.Resources>
+        <Style TargetType="TextBlock">
+            <Setter Property="FontFamily" Value="Segoe UI, Segoe UI Variable, Arial"/>
+            <Setter Property="Foreground" Value="#E2E8F0"/>
+        </Style>
+        <Style TargetType="CheckBox">
+            <Setter Property="FontFamily" Value="Segoe UI"/>
+            <Setter Property="Foreground" Value="#CBD5E1"/>
+            <Setter Property="FontSize" Value="10.5"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Margin" Value="0,2.5,0,2.5"/>
+        </Style>
+    </Window.Resources>
 
-# Handles
+    <Border Margin="6" Background="#0F172A" BorderBrush="#334155" BorderThickness="1.2" CornerRadius="12">
+        <Border.Effect>
+            <DropShadowEffect BlurRadius="16" ShadowDepth="4" Direction="270" Color="#000000" Opacity="0.9"/>
+        </Border.Effect>
+        <StackPanel Margin="14,12,14,14">
+            
+            <!-- Header with Title and Close 'X' -->
+            <Grid Margin="0,0,0,10">
+                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                    <Ellipse Width="7" Height="7" Fill="#38BDF8" Margin="0,0,6,0"/>
+                    <TextBlock Text="Preferencias del Widget" FontSize="12.5" FontWeight="Bold" Foreground="#F8FAFC"/>
+                </StackPanel>
+                <Button Name="DlgBtnCloseX" Content="X" Width="22" Height="22" HorizontalAlignment="Right"
+                        Background="#1E293B" Foreground="#94A3B8" BorderThickness="0" FontWeight="Bold" FontSize="10" Cursor="Hand">
+                    <Button.Resources><Style TargetType="Border"><Setter Property="CornerRadius" Value="11"/></Style></Button.Resources>
+                </Button>
+            </Grid>
+
+            <!-- Section 1: Modo Visual -->
+            <TextBlock Text="MODO VISUAL" FontSize="8.5" FontWeight="Bold" Foreground="#38BDF8" Margin="0,2,0,4"/>
+            <Grid Margin="0,0,0,6">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <Button Name="DlgBtnBars" Grid.Column="0" Content="Barras" Height="22" Margin="0,0,2,0"
+                        Background="#2563EB" Foreground="#FFFFFF" BorderThickness="0" FontSize="9.5" FontWeight="SemiBold" Cursor="Hand">
+                    <Button.Resources><Style TargetType="Border"><Setter Property="CornerRadius" Value="4"/></Style></Button.Resources>
+                </Button>
+                <Button Name="DlgBtnGauges" Grid.Column="1" Content="Tacometros" Height="22" Margin="1,0,1,0"
+                        Background="#1E293B" Foreground="#94A3B8" BorderThickness="0" FontSize="9.5" FontWeight="SemiBold" Cursor="Hand">
+                    <Button.Resources><Style TargetType="Border"><Setter Property="CornerRadius" Value="4"/></Style></Button.Resources>
+                </Button>
+                <Button Name="DlgBtnChips" Grid.Column="2" Content="Porcentajes" Height="22" Margin="2,0,0,0"
+                        Background="#1E293B" Foreground="#94A3B8" BorderThickness="0" FontSize="9.5" FontWeight="SemiBold" Cursor="Hand">
+                    <Button.Resources><Style TargetType="Border"><Setter Property="CornerRadius" Value="4"/></Style></Button.Resources>
+                </Button>
+            </Grid>
+
+            <!-- Section 2: Orientacion -->
+            <TextBlock Text="ORIENTACION" FontSize="8.5" FontWeight="Bold" Foreground="#38BDF8" Margin="0,4,0,4"/>
+            <Grid Margin="0,0,0,8">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <Button Name="DlgBtnOrientH" Grid.Column="0" Content="Horizontal (Fila)" Height="22" Margin="0,0,2,0"
+                        Background="#2563EB" Foreground="#FFFFFF" BorderThickness="0" FontSize="9.5" FontWeight="SemiBold" Cursor="Hand">
+                    <Button.Resources><Style TargetType="Border"><Setter Property="CornerRadius" Value="4"/></Style></Button.Resources>
+                </Button>
+                <Button Name="DlgBtnOrientV" Grid.Column="1" Content="Vertical (Columna)" Height="22" Margin="2,0,0,0"
+                        Background="#1E293B" Foreground="#94A3B8" BorderThickness="0" FontSize="9.5" FontWeight="SemiBold" Cursor="Hand">
+                    <Button.Resources><Style TargetType="Border"><Setter Property="CornerRadius" Value="4"/></Style></Button.Resources>
+                </Button>
+            </Grid>
+
+            <!-- Section 3: Opciones / Toggles -->
+            <TextBlock Text="OPCIONES GENERALES" FontSize="8.5" FontWeight="Bold" Foreground="#38BDF8" Margin="0,2,0,3"/>
+            <CheckBox Name="DlgChkAutoStart" Content="Iniciar automaticamente con Windows"/>
+            <CheckBox Name="DlgChkPin" Content="Siempre arriba (Topmost)" IsChecked="True"/>
+            <CheckBox Name="DlgChkClickThrough" Content="Modo Fantasma (Click-Through)"/>
+            <CheckBox Name="DlgChkShow5h" Content="Mostrar Limite 5 Horas" IsChecked="True"/>
+            <CheckBox Name="DlgChkShowWeekly" Content="Mostrar Limite Semanal" IsChecked="True"/>
+            <CheckBox Name="DlgChkShowContext" Content="Mostrar Tokens de Contexto" IsChecked="True"/>
+            <CheckBox Name="DlgChkShowSubtitles" Content="Mostrar Subtitulos y Detalles" IsChecked="True"/>
+
+            <!-- Section 4: Sliders -->
+            <Grid Margin="0,6,0,2">
+                <TextBlock Text="Opacidad del Widget (Todo)" FontSize="9.5" Foreground="#94A3B8"/>
+                <TextBlock Name="DlgTxtOpacityVal" Text="90%" HorizontalAlignment="Right" FontSize="9.5" FontWeight="Bold" Foreground="#38BDF8"/>
+            </Grid>
+            <Slider Name="DlgSliderOpacity" Minimum="0.15" Maximum="1.00" Value="0.90" SmallChange="0.05" LargeChange="0.1" Margin="0,0,0,4"/>
+
+            <Grid Margin="0,2,0,2">
+                <TextBlock Text="Escala / Tamano" FontSize="9.5" Foreground="#94A3B8"/>
+                <TextBlock Name="DlgTxtScaleVal" Text="100%" HorizontalAlignment="Right" FontSize="9.5" FontWeight="Bold" Foreground="#38BDF8"/>
+            </Grid>
+            <Slider Name="DlgSliderScale" Minimum="0.60" Maximum="1.40" Value="1.0" SmallChange="0.05" LargeChange="0.1" Margin="0,0,0,8"/>
+
+            <!-- Section 5: Temas -->
+            <TextBlock Text="TEMA DE COLOR" FontSize="8.5" FontWeight="Bold" Foreground="#38BDF8" Margin="0,2,0,4"/>
+            <Grid Margin="0,0,0,12">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <Button Name="DlgBtnThemeCyan" Grid.Column="0" Content="Cyan" Height="20" Margin="0,0,2,0" Background="#0E7490" Foreground="#FFFFFF" BorderThickness="0" FontSize="9" Cursor="Hand">
+                    <Button.Resources><Style TargetType="Border"><Setter Property="CornerRadius" Value="3"/></Style></Button.Resources>
+                </Button>
+                <Button Name="DlgBtnThemePurple" Grid.Column="1" Content="Violet" Height="20" Margin="1,0,1,0" Background="#6B21A8" Foreground="#FFFFFF" BorderThickness="0" FontSize="9" Cursor="Hand">
+                    <Button.Resources><Style TargetType="Border"><Setter Property="CornerRadius" Value="3"/></Style></Button.Resources>
+                </Button>
+                <Button Name="DlgBtnThemeGreen" Grid.Column="2" Content="Matrix" Height="20" Margin="2,0,0,0" Background="#065F46" Foreground="#FFFFFF" BorderThickness="0" FontSize="9" Cursor="Hand">
+                    <Button.Resources><Style TargetType="Border"><Setter Property="CornerRadius" Value="3"/></Style></Button.Resources>
+                </Button>
+            </Grid>
+
+            <!-- Actions Footer -->
+            <Grid Margin="0,2,0,0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <Button Name="DlgBtnResetPos" Grid.Column="0" Content="Centrar Pantalla" Height="26" Margin="0,0,3,0"
+                        Background="#1E293B" Foreground="#E2E8F0" BorderThickness="1" BorderBrush="#334155" FontSize="9.5" FontWeight="SemiBold" Cursor="Hand">
+                    <Button.Resources><Style TargetType="Border"><Setter Property="CornerRadius" Value="5"/></Style></Button.Resources>
+                </Button>
+                <Button Name="DlgBtnSave" Grid.Column="1" Content="Guardar y Salir" Height="26" Margin="3,0,0,0"
+                        Background="#10B981" Foreground="#042F2E" FontWeight="Bold" BorderThickness="0" FontSize="10" Cursor="Hand">
+                    <Button.Resources><Style TargetType="Border"><Setter Property="CornerRadius" Value="5"/></Style></Button.Resources>
+                </Button>
+            </Grid>
+
+        </StackPanel>
+    </Border>
+</Window>
+'@
+
+# Parse Windows
+$readerWidget = [System.Xml.XmlReader]::Create([System.IO.StringReader]$widgetXaml)
+$window = [System.Windows.Markup.XamlReader]::Load($readerWidget)
+
+$readerSettings = [System.Xml.XmlReader]::Create([System.IO.StringReader]$settingsXaml)
+$settingsWindow = [System.Windows.Markup.XamlReader]::Load($readerSettings)
+
+# Widget UI Handles
 $mainBorder = $window.FindName("MainBorder")
 $rootContainer = $window.FindName("RootContainer")
 $uiScale = $window.FindName("UiScale")
 $viewBars = $window.FindName("ViewBars")
 $viewGauges = $window.FindName("ViewGauges")
 $viewChips = $window.FindName("ViewChips")
-$viewSettings = $window.FindName("ViewSettings")
 
 $row5h = $window.FindName("Row5h")
 $rowWeekly = $window.FindName("RowWeekly")
@@ -372,13 +438,6 @@ $gaugeItemContext = $window.FindName("GaugeItemContext")
 $chipItem5h = $window.FindName("ChipItem5h")
 $chipItemWeekly = $window.FindName("ChipItemWeekly")
 $chipItemContext = $window.FindName("ChipItemContext")
-
-$chkShow5h = $window.FindName("ChkShow5h")
-$chkShowWeekly = $window.FindName("ChkShowWeekly")
-$chkShowContext = $window.FindName("ChkShowContext")
-$chkShowSubtitles = $window.FindName("ChkShowSubtitles")
-$chkPinSettings = $window.FindName("ChkPinSettings")
-$chkClickThrough = $window.FindName("ChkClickThrough")
 
 $prog5h = $window.FindName("Prog5h")
 $txt5hPct = $window.FindName("Txt5hPct")
@@ -400,51 +459,99 @@ $txtChip5h = $window.FindName("TxtChip5h")
 $txtChipWeekly = $window.FindName("TxtChipWeekly")
 $txtChipContext = $window.FindName("TxtChipContext")
 
-$btnStyleBars = $window.FindName("BtnStyleBars")
-$btnStyleGauges = $window.FindName("BtnStyleGauges")
-$btnStyleChips = $window.FindName("BtnStyleChips")
-
-$btnOrientH = $window.FindName("BtnOrientH")
-$btnOrientV = $window.FindName("BtnOrientV")
-
-$sliderOpacity = $window.FindName("SliderOpacity")
-$txtOpacityVal = $window.FindName("TxtOpacityVal")
-$sliderScale = $window.FindName("SliderScale")
-$txtScaleVal = $window.FindName("TxtScaleVal")
-$btnThemeCyan = $window.FindName("BtnThemeCyan")
-$btnThemePurple = $window.FindName("BtnThemePurple")
-$btnThemeGreen = $window.FindName("BtnThemeGreen")
-$btnSaveSettings = $window.FindName("BtnSaveSettings")
-
 # Context Menu elements
 $ctxModeBars = $window.FindName("CtxModeBars")
 $ctxModeGauges = $window.FindName("CtxModeGauges")
 $ctxModeChips = $window.FindName("CtxModeChips")
 $ctxOrientH = $window.FindName("CtxOrientH")
 $ctxOrientV = $window.FindName("CtxOrientV")
-$ctxSettings = $window.FindName("CtxSettings")
+$ctxResetPos = $window.FindName("CtxResetPos")
+$ctxAutoStart = $window.FindName("CtxAutoStart")
 $ctxPin = $window.FindName("CtxPin")
 $ctxClickThrough = $window.FindName("CtxClickThrough")
+$ctxSettings = $window.FindName("CtxSettings")
 $ctxRefresh = $window.FindName("CtxRefresh")
 $ctxClose = $window.FindName("CtxClose")
 
-# Config persistence
+# Settings Dialog Handles
+$dlgBtnCloseX = $settingsWindow.FindName("DlgBtnCloseX")
+$dlgBtnBars = $settingsWindow.FindName("DlgBtnBars")
+$dlgBtnGauges = $settingsWindow.FindName("DlgBtnGauges")
+$dlgBtnChips = $settingsWindow.FindName("DlgBtnChips")
+$dlgBtnOrientH = $settingsWindow.FindName("DlgBtnOrientH")
+$dlgBtnOrientV = $settingsWindow.FindName("DlgBtnOrientV")
+
+$dlgChkAutoStart = $settingsWindow.FindName("DlgChkAutoStart")
+$dlgChkPin = $settingsWindow.FindName("DlgChkPin")
+$dlgChkClickThrough = $settingsWindow.FindName("DlgChkClickThrough")
+$dlgChkShow5h = $settingsWindow.FindName("DlgChkShow5h")
+$dlgChkShowWeekly = $settingsWindow.FindName("DlgChkShowWeekly")
+$dlgChkShowContext = $settingsWindow.FindName("DlgChkShowContext")
+$dlgChkShowSubtitles = $settingsWindow.FindName("DlgChkShowSubtitles")
+
+$dlgSliderOpacity = $settingsWindow.FindName("DlgSliderOpacity")
+$dlgTxtOpacityVal = $settingsWindow.FindName("DlgTxtOpacityVal")
+$dlgSliderScale = $settingsWindow.FindName("DlgSliderScale")
+$dlgTxtScaleVal = $settingsWindow.FindName("DlgTxtScaleVal")
+
+$dlgBtnThemeCyan = $settingsWindow.FindName("DlgBtnThemeCyan")
+$dlgBtnThemePurple = $settingsWindow.FindName("DlgBtnThemePurple")
+$dlgBtnThemeGreen = $settingsWindow.FindName("DlgBtnThemeGreen")
+$dlgBtnResetPos = $settingsWindow.FindName("DlgBtnResetPos")
+$dlgBtnSave = $settingsWindow.FindName("DlgBtnSave")
+
+# Configuration and Paths
 $configDir = if ($PSScriptRoot) { $PSScriptRoot } else { "$HOME\AntigravityWidget" }
 if (-not (Test-Path $configDir)) {
     New-Item -ItemType Directory -Force -Path $configDir | Out-Null
 }
 $configFile = "$configDir\widget_config.json"
+$startupLnk = "$([Environment]::GetFolderPath('Startup'))\AntigravityWidget.lnk"
+
 $script:currentMode = "Bars"
 $script:currentOrientation = "Horizontal"
 $script:isClickThrough = $false
+$script:show5h = $true
+$script:showWeekly = $true
+$script:showContext = $true
+$script:showSubtitles = $true
 
+# ================= AUTOSTART HELPER =================
+function Get-AutostartState {
+    return (Test-Path $startupLnk)
+}
+
+function Set-AutostartState ($enable) {
+    try {
+        if ($enable) {
+            $vbsPath = "$PSScriptRoot\Lanzar-Widget.vbs"
+            $wsh = New-Object -ComObject WScript.Shell
+            $shortcut = $wsh.CreateShortcut($startupLnk)
+            $shortcut.TargetPath = "wscript.exe"
+            $shortcut.Arguments = "`"$vbsPath`""
+            $shortcut.WorkingDirectory = "$PSScriptRoot"
+            $shortcut.Description = "Antigravity Desktop Widget"
+            $shortcut.Save()
+            [System.Runtime.InteropServices.Marshal]::ReleaseComObject($wsh) | Out-Null
+        } else {
+            if (Test-Path $startupLnk) {
+                Remove-Item -Path $startupLnk -Force -ErrorAction SilentlyContinue
+            }
+        }
+        $isAuto = Get-AutostartState
+        $ctxAutoStart.IsChecked = $isAuto
+        $dlgChkAutoStart.IsChecked = $isAuto
+        if ($trayAutoStartItem) { $trayAutoStartItem.Checked = $isAuto }
+    } catch {}
+}
+
+# ================= CLICK-THROUGH HELPER =================
 function Set-ClickThroughState ($enable) {
     $script:isClickThrough = [bool]$enable
-    $chkClickThrough.IsChecked = $script:isClickThrough
+    $dlgChkClickThrough.IsChecked = $script:isClickThrough
     $ctxClickThrough.IsChecked = $script:isClickThrough
     if ($trayClickThroughItem) { $trayClickThroughItem.Checked = $script:isClickThrough }
     
-    # Apply to Win32 handle
     try {
         $helper = [System.Windows.Interop.WindowInteropHelper]::new($window)
         $hwnd = $helper.Handle
@@ -454,6 +561,17 @@ function Set-ClickThroughState ($enable) {
     } catch {}
 }
 
+# ================= RESET POSITION =================
+function Reset-WidgetPosition {
+    $screen = [System.Windows.Forms.Screen]::PrimaryScreen.WorkingArea
+    $w = if ($window.ActualWidth -gt 0) { $window.ActualWidth } else { 180 }
+    $h = if ($window.ActualHeight -gt 0) { $window.ActualHeight } else { 80 }
+    $window.Left = [Math]::Max(0, ($screen.Width - $w) / 2 + $screen.Left)
+    $window.Top = [Math]::Max(0, ($screen.Height - $h) / 2 + $screen.Top)
+    Save-WidgetConfig
+}
+
+# ================= ORIENTATION =================
 function Set-WidgetOrientation ($orientation) {
     $script:currentOrientation = if ($orientation -eq "Vertical") { "Vertical" } else { "Horizontal" }
 
@@ -474,10 +592,10 @@ function Set-WidgetOrientation ($orientation) {
         $chipItemWeekly.Margin = [System.Windows.Thickness]::new(0, 2, 0, 2)
         $chipItemContext.Margin = [System.Windows.Thickness]::new(0, 2, 0, 2)
 
-        $btnOrientV.Background = $activeBg
-        $btnOrientV.Foreground = $activeFg
-        $btnOrientH.Background = $inactiveBg
-        $btnOrientH.Foreground = $inactiveFg
+        $dlgBtnOrientV.Background = $activeBg
+        $dlgBtnOrientV.Foreground = $activeFg
+        $dlgBtnOrientH.Background = $inactiveBg
+        $dlgBtnOrientH.Foreground = $inactiveFg
     } else {
         $viewGauges.Orientation = [System.Windows.Controls.Orientation]::Horizontal
         $viewChips.Orientation = [System.Windows.Controls.Orientation]::Horizontal
@@ -490,49 +608,49 @@ function Set-WidgetOrientation ($orientation) {
         $chipItemWeekly.Margin = [System.Windows.Thickness]::new(2, 0, 2, 0)
         $chipItemContext.Margin = [System.Windows.Thickness]::new(2, 0, 2, 0)
 
-        $btnOrientH.Background = $activeBg
-        $btnOrientH.Foreground = $activeFg
-        $btnOrientV.Background = $inactiveBg
-        $btnOrientV.Foreground = $inactiveFg
+        $dlgBtnOrientH.Background = $activeBg
+        $dlgBtnOrientH.Foreground = $activeFg
+        $dlgBtnOrientV.Background = $inactiveBg
+        $dlgBtnOrientV.Foreground = $inactiveFg
     }
 }
 
+# ================= VISUAL MODES =================
 function Set-WidgetMode ($mode) {
     $script:currentMode = $mode
     
     $viewBars.Visibility = [System.Windows.Visibility]::Collapsed
     $viewGauges.Visibility = [System.Windows.Visibility]::Collapsed
     $viewChips.Visibility = [System.Windows.Visibility]::Collapsed
-    $viewSettings.Visibility = [System.Windows.Visibility]::Collapsed
 
     $inactiveBg = [System.Windows.Media.BrushConverter]::new().ConvertFromString("#1E293B")
     $inactiveFg = [System.Windows.Media.BrushConverter]::new().ConvertFromString("#94A3B8")
     $activeBg = [System.Windows.Media.BrushConverter]::new().ConvertFromString("#2563EB")
     $activeFg = [System.Windows.Media.BrushConverter]::new().ConvertFromString("#FFFFFF")
 
-    $btnStyleBars.Background = $inactiveBg
-    $btnStyleBars.Foreground = $inactiveFg
-    $btnStyleGauges.Background = $inactiveBg
-    $btnStyleGauges.Foreground = $inactiveFg
-    $btnStyleChips.Background = $inactiveBg
-    $btnStyleChips.Foreground = $inactiveFg
+    $dlgBtnBars.Background = $inactiveBg
+    $dlgBtnBars.Foreground = $inactiveFg
+    $dlgBtnGauges.Background = $inactiveBg
+    $dlgBtnGauges.Foreground = $inactiveFg
+    $dlgBtnChips.Background = $inactiveBg
+    $dlgBtnChips.Foreground = $inactiveFg
 
     switch ($mode) {
         "Gauges" {
             $viewGauges.Visibility = [System.Windows.Visibility]::Visible
-            $btnStyleGauges.Background = $activeBg
-            $btnStyleGauges.Foreground = $activeFg
+            $dlgBtnGauges.Background = $activeBg
+            $dlgBtnGauges.Foreground = $activeFg
         }
         "Chips" {
             $viewChips.Visibility = [System.Windows.Visibility]::Visible
-            $btnStyleChips.Background = $activeBg
-            $btnStyleChips.Foreground = $activeFg
+            $dlgBtnChips.Background = $activeBg
+            $dlgBtnChips.Foreground = $activeFg
         }
         Default {
             $script:currentMode = "Bars"
             $viewBars.Visibility = [System.Windows.Visibility]::Visible
-            $btnStyleBars.Background = $activeBg
-            $btnStyleBars.Foreground = $activeFg
+            $dlgBtnBars.Background = $activeBg
+            $dlgBtnBars.Foreground = $activeFg
         }
     }
     Set-WidgetOrientation $script:currentOrientation
@@ -540,10 +658,10 @@ function Set-WidgetMode ($mode) {
 }
 
 function Apply-VisibilityRules {
-    $v5h = if ($chkShow5h.IsChecked) { [System.Windows.Visibility]::Visible } else { [System.Windows.Visibility]::Collapsed }
-    $vW = if ($chkShowWeekly.IsChecked) { [System.Windows.Visibility]::Visible } else { [System.Windows.Visibility]::Collapsed }
-    $vCtx = if ($chkShowContext.IsChecked) { [System.Windows.Visibility]::Visible } else { [System.Windows.Visibility]::Collapsed }
-    $vSub = if ($chkShowSubtitles.IsChecked) { [System.Windows.Visibility]::Visible } else { [System.Windows.Visibility]::Collapsed }
+    $v5h = if ($script:show5h) { [System.Windows.Visibility]::Visible } else { [System.Windows.Visibility]::Collapsed }
+    $vW = if ($script:showWeekly) { [System.Windows.Visibility]::Visible } else { [System.Windows.Visibility]::Collapsed }
+    $vCtx = if ($script:showContext) { [System.Windows.Visibility]::Visible } else { [System.Windows.Visibility]::Collapsed }
+    $vSub = if ($script:showSubtitles) { [System.Windows.Visibility]::Visible } else { [System.Windows.Visibility]::Collapsed }
 
     $row5h.Visibility = $v5h
     $rowWeekly.Visibility = $vW
@@ -561,49 +679,75 @@ function Apply-VisibilityRules {
     $txtWeeklyDetails.Visibility = $vSub
 }
 
-$chkShow5h.Add_Checked({ Apply-VisibilityRules })
-$chkShow5h.Add_Unchecked({ Apply-VisibilityRules })
-$chkShowWeekly.Add_Checked({ Apply-VisibilityRules })
-$chkShowWeekly.Add_Unchecked({ Apply-VisibilityRules })
-$chkShowContext.Add_Checked({ Apply-VisibilityRules })
-$chkShowContext.Add_Unchecked({ Apply-VisibilityRules })
-$chkShowSubtitles.Add_Checked({ Apply-VisibilityRules })
-$chkShowSubtitles.Add_Unchecked({ Apply-VisibilityRules })
-
 function Save-WidgetConfig {
     try {
         $cfgObj = [PSCustomObject]@{
-            Opacity       = $sliderOpacity.Value
-            Scale         = $sliderScale.Value
+            Opacity       = $dlgSliderOpacity.Value
+            Scale         = $dlgSliderScale.Value
             Mode          = $script:currentMode
             Orientation   = $script:currentOrientation
             Left          = $window.Left
             Top           = $window.Top
             Pinned        = $window.Topmost
-            Show5h        = $chkShow5h.IsChecked
-            ShowWeekly    = $chkShowWeekly.IsChecked
-            ShowContext   = $chkShowContext.IsChecked
-            ShowSubtitles = $chkShowSubtitles.IsChecked
+            Show5h        = $script:show5h
+            ShowWeekly    = $script:showWeekly
+            ShowContext   = $script:showContext
+            ShowSubtitles = $script:showSubtitles
             ClickThrough  = $script:isClickThrough
         }
         $cfgObj | ConvertTo-Json | Set-Content $configFile -Force
     } catch {}
 }
 
-# Load saved preferences
+function Toggle-Pin {
+    $window.Topmost = -not $window.Topmost
+    $ctxPin.IsChecked = $window.Topmost
+    $dlgChkPin.IsChecked = $window.Topmost
+    if ($trayPinItem) { $trayPinItem.Checked = $window.Topmost }
+    Save-WidgetConfig
+}
+
+function Show-SettingsDialog {
+    $dlgChkAutoStart.IsChecked = Get-AutostartState
+    $dlgChkPin.IsChecked = $window.Topmost
+    $dlgChkClickThrough.IsChecked = $script:isClickThrough
+    $dlgChkShow5h.IsChecked = $script:show5h
+    $dlgChkShowWeekly.IsChecked = $script:showWeekly
+    $dlgChkShowContext.IsChecked = $script:showContext
+    $dlgChkShowSubtitles.IsChecked = $script:showSubtitles
+    $dlgSliderOpacity.Value = $window.Opacity
+    $dlgSliderScale.Value = $uiScale.ScaleX
+
+    $settingsWindow.Show()
+    $settingsWindow.Activate()
+}
+
+function Close-WidgetApp {
+    Save-WidgetConfig
+    if ($notifyIcon) {
+        $notifyIcon.Visible = $false
+        $notifyIcon.Dispose()
+    }
+    $settingsWindow.Close()
+    $window.Close()
+}
+
+# ================= LOAD SAVED CONFIG =================
 if (Test-Path $configFile) {
     try {
         $cfg = Get-Content $configFile -Raw | ConvertFrom-Json
         if ($cfg.Opacity) {
-            $sliderOpacity.Value = $cfg.Opacity
-            $mainBorder.Background.Opacity = $cfg.Opacity
-            $txtOpacityVal.Text = ([string][int]($cfg.Opacity * 100)) + "%"
+            $dlgSliderOpacity.Value = [double]$cfg.Opacity
+            $window.Opacity = [double]$cfg.Opacity
+            $dlgTxtOpacityVal.Text = ([string][int]($cfg.Opacity * 100)) + "%"
+        } else {
+            $window.Opacity = 0.90
         }
         if ($cfg.Scale) {
-            $sliderScale.Value = $cfg.Scale
+            $dlgSliderScale.Value = $cfg.Scale
             $uiScale.ScaleX = $cfg.Scale
             $uiScale.ScaleY = $cfg.Scale
-            $txtScaleVal.Text = ([string][int]($cfg.Scale * 100)) + "%"
+            $dlgTxtScaleVal.Text = ([string][int]($cfg.Scale * 100)) + "%"
         }
         if ($cfg.Left -ne $null -and $cfg.Top -ne $null) {
             $window.WindowStartupLocation = [System.Windows.WindowStartupLocation]::Manual
@@ -613,12 +757,12 @@ if (Test-Path $configFile) {
         if ($cfg.Pinned -ne $null) {
             $window.Topmost = [bool]$cfg.Pinned
             $ctxPin.IsChecked = $window.Topmost
-            $chkPinSettings.IsChecked = $window.Topmost
+            $dlgChkPin.IsChecked = $window.Topmost
         }
-        if ($cfg.Show5h -ne $null) { $chkShow5h.IsChecked = [bool]$cfg.Show5h }
-        if ($cfg.ShowWeekly -ne $null) { $chkShowWeekly.IsChecked = [bool]$cfg.ShowWeekly }
-        if ($cfg.ShowContext -ne $null) { $chkShowContext.IsChecked = [bool]$cfg.ShowContext }
-        if ($cfg.ShowSubtitles -ne $null) { $chkShowSubtitles.IsChecked = [bool]$cfg.ShowSubtitles }
+        if ($cfg.Show5h -ne $null) { $script:show5h = [bool]$cfg.Show5h; $dlgChkShow5h.IsChecked = $script:show5h }
+        if ($cfg.ShowWeekly -ne $null) { $script:showWeekly = [bool]$cfg.ShowWeekly; $dlgChkShowWeekly.IsChecked = $script:showWeekly }
+        if ($cfg.ShowContext -ne $null) { $script:showContext = [bool]$cfg.ShowContext; $dlgChkShowContext.IsChecked = $script:showContext }
+        if ($cfg.ShowSubtitles -ne $null) { $script:showSubtitles = [bool]$cfg.ShowSubtitles; $dlgChkShowSubtitles.IsChecked = $script:showSubtitles }
         if ($cfg.ClickThrough -ne $null) { $script:isClickThrough = [bool]$cfg.ClickThrough }
         if ($cfg.Orientation) { $script:currentOrientation = $cfg.Orientation }
         if ($cfg.Mode) { Set-WidgetMode $cfg.Mode } else { Set-WidgetMode "Bars" }
@@ -629,7 +773,10 @@ if (Test-Path $configFile) {
     Set-WidgetMode "Bars"
 }
 
-# Smooth Delta-based Mouse Dragging (Does NOT trigger Windows 11 Snap Assist / Quarter Screen Snap!)
+$ctxAutoStart.IsChecked = Get-AutostartState
+$dlgChkAutoStart.IsChecked = Get-AutostartState
+
+# ================= DRAG & DROP =================
 $script:isDragging = $false
 $script:startScreenPos = [System.Drawing.Point]::new(0,0)
 $script:startWindowLeft = 0
@@ -663,7 +810,7 @@ $mainBorder.Add_MouseLeftButtonUp({
     }
 })
 
-# Middle Click toggles Orientation (Horizontal <-> Vertical)
+# Middle Click toggles Orientation
 $mainBorder.Add_MouseDown({
     if ($args[0].ChangedButton -eq [System.Windows.Input.MouseButton]::Middle) {
         if ($script:currentOrientation -eq "Horizontal") {
@@ -675,84 +822,64 @@ $mainBorder.Add_MouseDown({
     }
 })
 
-function Toggle-Pin {
-    $window.Topmost = -not $window.Topmost
-    $ctxPin.IsChecked = $window.Topmost
-    $chkPinSettings.IsChecked = $window.Topmost
-    if ($trayPinItem) { $trayPinItem.Checked = $window.Topmost }
-    Save-WidgetConfig
-}
-
-$chkPinSettings.Add_Checked({ if (-not $window.Topmost) { Toggle-Pin } })
-$chkPinSettings.Add_Unchecked({ if ($window.Topmost) { Toggle-Pin } })
-
-function Toggle-Settings {
-    if ($viewSettings.Visibility -eq [System.Windows.Visibility]::Visible) {
-        Set-WidgetMode $script:currentMode
-    } else {
-        $viewBars.Visibility = [System.Windows.Visibility]::Collapsed
-        $viewGauges.Visibility = [System.Windows.Visibility]::Collapsed
-        $viewChips.Visibility = [System.Windows.Visibility]::Collapsed
-        $viewSettings.Visibility = [System.Windows.Visibility]::Visible
-    }
-}
-
-function Close-WidgetApp {
-    Save-WidgetConfig
-    if ($notifyIcon) {
-        $notifyIcon.Visible = $false
-        $notifyIcon.Dispose()
-    }
-    $window.Close()
-}
-
-$btnSaveSettings.Add_Click({
-    Set-WidgetMode $script:currentMode
-    Save-WidgetConfig
+# Settings Dialog Dragging
+$settingsBorder = $settingsWindow.Content
+$settingsBorder.Add_MouseLeftButtonDown({
+    $settingsWindow.DragMove()
 })
 
-# Settings Mode Buttons
-$btnStyleBars.Add_Click({ Set-WidgetMode "Bars"; Save-WidgetConfig })
-$btnStyleGauges.Add_Click({ Set-WidgetMode "Gauges"; Save-WidgetConfig })
-$btnStyleChips.Add_Click({ Set-WidgetMode "Chips"; Save-WidgetConfig })
-
-# Settings Orientation Buttons
-$btnOrientH.Add_Click({ Set-WidgetOrientation "Horizontal"; Save-WidgetConfig })
-$btnOrientV.Add_Click({ Set-WidgetOrientation "Vertical"; Save-WidgetConfig })
-
-# Context Menu Items (Right Click on Widget)
+# Context Menu bindings
 $ctxModeBars.Add_Click({ Set-WidgetMode "Bars"; Save-WidgetConfig })
 $ctxModeGauges.Add_Click({ Set-WidgetMode "Gauges"; Save-WidgetConfig })
 $ctxModeChips.Add_Click({ Set-WidgetMode "Chips"; Save-WidgetConfig })
-
 $ctxOrientH.Add_Click({ Set-WidgetOrientation "Horizontal"; Save-WidgetConfig })
 $ctxOrientV.Add_Click({ Set-WidgetOrientation "Vertical"; Save-WidgetConfig })
-
-$ctxSettings.Add_Click({ Toggle-Settings })
+$ctxResetPos.Add_Click({ Reset-WidgetPosition })
+$ctxAutoStart.Add_Click({ Set-AutostartState (-not (Get-AutostartState)) })
 $ctxPin.IsChecked = $window.Topmost
 $ctxPin.Add_Click({ Toggle-Pin })
 $ctxClickThrough.Add_Click({ Set-ClickThroughState (-not $script:isClickThrough); Save-WidgetConfig })
+$ctxSettings.Add_Click({ Show-SettingsDialog })
 $ctxRefresh.Add_Click({ Update-WidgetData })
 $ctxClose.Add_Click({ Close-WidgetApp })
 
-# Checkbox in settings for Click-Through
-$chkClickThrough.Add_Checked({ Set-ClickThroughState $true })
-$chkClickThrough.Add_Unchecked({ Set-ClickThroughState $false })
+# ================= SETTINGS DIALOG EVENTS =================
+$dlgBtnCloseX.Add_Click({ $settingsWindow.Hide() })
+$dlgBtnSave.Add_Click({
+    Save-WidgetConfig
+    $settingsWindow.Hide()
+})
+$dlgBtnResetPos.Add_Click({ Reset-WidgetPosition })
 
-# Sliders
-$sliderOpacity.Add_ValueChanged({
-    $mainBorder.Background.Opacity = $sliderOpacity.Value
-    $txtOpacityVal.Text = ([string][int]($sliderOpacity.Value * 100)) + "%"
+$dlgBtnBars.Add_Click({ Set-WidgetMode "Bars"; Save-WidgetConfig })
+$dlgBtnGauges.Add_Click({ Set-WidgetMode "Gauges"; Save-WidgetConfig })
+$dlgBtnChips.Add_Click({ Set-WidgetMode "Chips"; Save-WidgetConfig })
+
+$dlgBtnOrientH.Add_Click({ Set-WidgetOrientation "Horizontal"; Save-WidgetConfig })
+$dlgBtnOrientV.Add_Click({ Set-WidgetOrientation "Vertical"; Save-WidgetConfig })
+
+$dlgChkAutoStart.Add_Click({ Set-AutostartState $dlgChkAutoStart.IsChecked })
+$dlgChkPin.Add_Click({ if ($window.Topmost -ne $dlgChkPin.IsChecked) { Toggle-Pin } })
+$dlgChkClickThrough.Add_Click({ Set-ClickThroughState $dlgChkClickThrough.IsChecked; Save-WidgetConfig })
+
+$dlgChkShow5h.Add_Click({ $script:show5h = [bool]$dlgChkShow5h.IsChecked; Apply-VisibilityRules; Save-WidgetConfig })
+$dlgChkShowWeekly.Add_Click({ $script:showWeekly = [bool]$dlgChkShowWeekly.IsChecked; Apply-VisibilityRules; Save-WidgetConfig })
+$dlgChkShowContext.Add_Click({ $script:showContext = [bool]$dlgChkShowContext.IsChecked; Apply-VisibilityRules; Save-WidgetConfig })
+$dlgChkShowSubtitles.Add_Click({ $script:showSubtitles = [bool]$dlgChkShowSubtitles.IsChecked; Apply-VisibilityRules; Save-WidgetConfig })
+
+$dlgSliderOpacity.Add_ValueChanged({
+    $window.Opacity = $dlgSliderOpacity.Value
+    $dlgTxtOpacityVal.Text = ([string][int]($dlgSliderOpacity.Value * 100)) + "%"
 })
 
-$sliderScale.Add_ValueChanged({
-    $uiScale.ScaleX = $sliderScale.Value
-    $uiScale.ScaleY = $sliderScale.Value
-    $txtScaleVal.Text = ([string][int]($sliderScale.Value * 100)) + "%"
+$dlgSliderScale.Add_ValueChanged({
+    $uiScale.ScaleX = $dlgSliderScale.Value
+    $uiScale.ScaleY = $dlgSliderScale.Value
+    $dlgTxtScaleVal.Text = ([string][int]($dlgSliderScale.Value * 100)) + "%"
 })
 
-# Themes
-$btnThemeCyan.Add_Click({
+# Dialog Themes
+$dlgBtnThemeCyan.Add_Click({
     $grad = [System.Windows.Media.LinearGradientBrush]::new()
     $grad.StartPoint = [System.Windows.Point]::new(0,0)
     $grad.EndPoint = [System.Windows.Point]::new(1,1)
@@ -762,7 +889,7 @@ $btnThemeCyan.Add_Click({
     $mainBorder.BorderBrush = $grad
 })
 
-$btnThemePurple.Add_Click({
+$dlgBtnThemePurple.Add_Click({
     $grad = [System.Windows.Media.LinearGradientBrush]::new()
     $grad.StartPoint = [System.Windows.Point]::new(0,0)
     $grad.EndPoint = [System.Windows.Point]::new(1,1)
@@ -772,7 +899,7 @@ $btnThemePurple.Add_Click({
     $mainBorder.BorderBrush = $grad
 })
 
-$btnThemeGreen.Add_Click({
+$dlgBtnThemeGreen.Add_Click({
     $grad = [System.Windows.Media.LinearGradientBrush]::new()
     $grad.StartPoint = [System.Windows.Point]::new(0,0)
     $grad.EndPoint = [System.Windows.Point]::new(1,1)
@@ -801,7 +928,7 @@ $notifyIcon.Icon = [System.Drawing.Icon]::FromHandle($hIcon)
 $notifyIcon.Text = "Antigravity Widget"
 $notifyIcon.Visible = $true
 
-# Context menu items
+# Context menu items in tray
 $trayShowItem = $contextMenu.Items.Add("Mostrar / Ocultar")
 $trayShowItem.Add_Click({
     if ($window.Visibility -eq [System.Windows.Visibility]::Visible) {
@@ -828,12 +955,15 @@ $trayOrientV = $trayOrientMenu.DropDownItems.Add("Vertical")
 $trayOrientV.Add_Click({ Set-WidgetOrientation "Vertical"; Save-WidgetConfig })
 $contextMenu.Items.Add($trayOrientMenu) | Out-Null
 
-$traySettingsItem = $contextMenu.Items.Add("Opciones y Estilo")
-$traySettingsItem.Add_Click({
-    $window.Visibility = [System.Windows.Visibility]::Visible
-    $window.Activate()
-    Toggle-Settings
-})
+$trayResetPosItem = $contextMenu.Items.Add("Restablecer Posicion (Centrar)")
+$trayResetPosItem.Add_Click({ Reset-WidgetPosition })
+
+$contextMenu.Items.Add("-") | Out-Null
+
+$trayAutoStartItem = $contextMenu.Items.Add("Iniciar con Windows")
+$trayAutoStartItem.CheckOnClick = $true
+$trayAutoStartItem.Checked = Get-AutostartState
+$trayAutoStartItem.Add_Click({ Set-AutostartState $trayAutoStartItem.Checked })
 
 $trayPinItem = $contextMenu.Items.Add("Siempre arriba")
 $trayPinItem.CheckOnClick = $true
@@ -847,6 +977,9 @@ $trayClickThroughItem.Add_Click({
     Set-ClickThroughState $trayClickThroughItem.Checked
     Save-WidgetConfig
 })
+
+$traySettingsItem = $contextMenu.Items.Add("Preferencias...")
+$traySettingsItem.Add_Click({ Show-SettingsDialog })
 
 $contextMenu.Items.Add("-") | Out-Null
 
