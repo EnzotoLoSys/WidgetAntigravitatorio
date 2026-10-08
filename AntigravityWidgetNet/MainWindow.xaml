@@ -157,7 +157,9 @@
                         <MenuItem x:Name="CtxOrientH" Header="Horizontal (Fila)" Click="OnOrientHClick"/>
                         <MenuItem x:Name="CtxOrientV" Header="Vertical (Columna)" Click="OnOrientVClick"/>
                     </MenuItem>
-                    <MenuItem x:Name="CtxResetPos" Header="Restablecer Posicion (Centrar)" Click="OnResetPosClick"/>
+                    <MenuItem x:Name="CtxCenterTaskbar" Header="Centrar en Barra de Tareas" Click="OnCenterTaskbarClick"/>
+                    <MenuItem x:Name="CtxTaskbarPreset" Header="Preset: Estilo Barra de Tareas" Click="OnTaskbarPresetClick"/>
+                    <MenuItem x:Name="CtxResetPos" Header="Centrar en Pantalla" Click="OnResetPosClick"/>
                     <Separator Background="#334155"/>
                     <MenuItem x:Name="CtxAutoStart" Header="Iniciar con Windows" IsCheckable="True" Click="OnAutoStartClick"/>
                     <MenuItem x:Name="CtxPin" Header="Siempre arriba" IsCheckable="True" Click="OnPinClick"/>

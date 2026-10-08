@@ -87,6 +87,7 @@ namespace AntigravityWidget
             };
             contextMenu.Items.Add(ghostItem);
 
+            contextMenu.Items.Add("Centrar en Barra de Tareas", null, (s, e) => _mainWindow?.CenterOnTaskbar());
             contextMenu.Items.Add("Centrar en Pantalla", null, (s, e) => _mainWindow?.CenterOnScreen());
             contextMenu.Items.Add("Actualizar Métricas", null, (s, e) => _mainWindow?.RefreshDataAsync());
             contextMenu.Items.Add(new ToolStripSeparator());

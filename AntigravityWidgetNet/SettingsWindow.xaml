@@ -126,6 +126,7 @@
             <CheckBox x:Name="DlgChkAutoStart" Content="Iniciar automaticamente con Windows" Click="OnAutoStartClick"/>
             <CheckBox x:Name="DlgChkPin" Content="Siempre arriba (Topmost)" IsChecked="True" Click="OnPinClick"/>
             <CheckBox x:Name="DlgChkClickThrough" Content="Modo Fantasma (Click-Through)" Click="OnClickThroughClick"/>
+            <CheckBox x:Name="DlgChkTaskbarMode" Content="Modo Barra (Fondo y bordes invisibles)" Click="OnTaskbarModeClick"/>
             <CheckBox x:Name="DlgChkShow5h" Content="Mostrar Limite 5 Horas" IsChecked="True" Click="OnShowVisibilityClick"/>
             <CheckBox x:Name="DlgChkShowWeekly" Content="Mostrar Limite Semanal" IsChecked="True" Click="OnShowVisibilityClick"/>
             <CheckBox x:Name="DlgChkShowContext" Content="Mostrar Tokens de Contexto" IsChecked="True" Click="OnShowVisibilityClick"/>
@@ -151,20 +152,24 @@
             </Grid>
 
             <!-- Actions Footer -->
-            <Grid Margin="0,2,0,0">
+            <Grid Margin="0,2,0,5">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
-                <Button x:Name="DlgBtnResetPos" Grid.Column="0" Content="Centrar Pantalla" Height="26" Margin="0,0,3,0"
-                        Background="#1E293B" Foreground="#E2E8F0" BorderThickness="1" BorderBrush="#334155" FontSize="9.5" FontWeight="SemiBold" Cursor="Hand" Click="OnResetPosClick">
+                <Button x:Name="DlgBtnResetPos" Grid.Column="0" Content="Centrar Pantalla" Height="26" Margin="0,0,2,0"
+                        Background="#1E293B" Foreground="#E2E8F0" BorderThickness="1" BorderBrush="#334155" FontSize="9" FontWeight="SemiBold" Cursor="Hand" Click="OnResetPosClick">
                     <Button.Resources><Style TargetType="Border"><Setter Property="CornerRadius" Value="5"/></Style></Button.Resources>
                 </Button>
-                <Button x:Name="DlgBtnSave" Grid.Column="1" Content="Guardar y Salir" Height="26" Margin="3,0,0,0"
-                        Background="#10B981" Foreground="#042F2E" FontWeight="Bold" BorderThickness="0" FontSize="10" Cursor="Hand" Click="OnSaveClick">
+                <Button x:Name="DlgBtnCenterTaskbar" Grid.Column="1" Content="Centrar en Barra" Height="26" Margin="2,0,0,0"
+                        Background="#0284C7" Foreground="#FFFFFF" BorderThickness="0" FontSize="9" FontWeight="Bold" Cursor="Hand" Click="OnCenterTaskbarClick">
                     <Button.Resources><Style TargetType="Border"><Setter Property="CornerRadius" Value="5"/></Style></Button.Resources>
                 </Button>
             </Grid>
+            <Button x:Name="DlgBtnSave" Content="Guardar y Salir" Height="26"
+                    Background="#10B981" Foreground="#042F2E" FontWeight="Bold" BorderThickness="0" FontSize="10" Cursor="Hand" Click="OnSaveClick">
+                <Button.Resources><Style TargetType="Border"><Setter Property="CornerRadius" Value="5"/></Style></Button.Resources>
+            </Button>
 
         </StackPanel>
     </Border>

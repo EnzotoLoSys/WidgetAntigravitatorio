@@ -47,6 +47,7 @@ namespace AntigravityWidget
             DlgChkAutoStart.IsChecked = ConfigService.IsAutoStartEnabled();
             DlgChkPin.IsChecked = _cfg.Pinned;
             DlgChkClickThrough.IsChecked = _cfg.ClickThrough;
+            DlgChkTaskbarMode.IsChecked = _cfg.OpacityBg <= 0.05 && _cfg.OpacityBorder <= 0.05;
             DlgChkShow5h.IsChecked = _cfg.Show5h;
             DlgChkShowWeekly.IsChecked = _cfg.ShowWeekly;
             DlgChkShowContext.IsChecked = _cfg.ShowContext;
@@ -199,6 +200,39 @@ namespace AntigravityWidget
         private void OnResetPosClick(object sender, RoutedEventArgs e)
         {
             _mainWindow.CenterOnScreen();
+        }
+
+        private void OnCenterTaskbarClick(object sender, RoutedEventArgs e)
+        {
+            _mainWindow.CenterOnTaskbar();
+        }
+
+        private void OnTaskbarModeClick(object sender, RoutedEventArgs e)
+        {
+            bool isTaskbarMode = DlgChkTaskbarMode.IsChecked ?? false;
+            if (isTaskbarMode)
+            {
+                _cfg.OpacityBg = 0.0;
+                _cfg.OpacityBorder = 0.0;
+                _cfg.Orientation = "Horizontal";
+                UpdateOrientButtons("Horizontal");
+                DlgSliderOpacityBg.Value = 0.0;
+                DlgTxtOpacityBgVal.Text = "0%";
+                DlgSliderOpacityBorder.Value = 0.0;
+                DlgTxtOpacityBorderVal.Text = "0%";
+                _mainWindow.ApplyConfig();
+                _mainWindow.CenterOnTaskbar();
+            }
+            else
+            {
+                _cfg.OpacityBg = 0.90;
+                _cfg.OpacityBorder = 1.0;
+                DlgSliderOpacityBg.Value = 0.90;
+                DlgTxtOpacityBgVal.Text = "90%";
+                DlgSliderOpacityBorder.Value = 1.0;
+                DlgTxtOpacityBorderVal.Text = "100%";
+                _mainWindow.ApplyConfig();
+            }
         }
 
         private void OnSaveClick(object sender, RoutedEventArgs e)

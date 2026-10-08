@@ -77,6 +77,52 @@ namespace AntigravityWidget
             ConfigService.Save(Config);
         }
 
+        public void CenterOnTaskbar()
+        {
+            if (Config.Orientation != "Horizontal")
+            {
+                Config.Orientation = "Horizontal";
+            }
+            ApplyConfig();
+
+            // Determine active screen based on current window position
+            var currentPoint = new System.Drawing.Point((int)Math.Max(0, this.Left), (int)Math.Max(0, this.Top));
+            var screen = System.Windows.Forms.Screen.FromPoint(currentPoint);
+            var bounds = screen.Bounds;
+            var workArea = screen.WorkingArea;
+
+            // Detect taskbar geometry
+            double taskbarTop = workArea.Bottom;
+            double taskbarH = bounds.Height - workArea.Height;
+            if (workArea.Top > bounds.Top)
+            {
+                taskbarTop = bounds.Top;
+                taskbarH = workArea.Top - bounds.Top;
+            }
+            if (taskbarH <= 0) taskbarH = 48;
+
+            this.UpdateLayout();
+            double widgetW = this.ActualWidth > 0 ? this.ActualWidth : 385;
+            double widgetH = this.ActualHeight > 0 ? this.ActualHeight : 40;
+
+            this.Left = bounds.Left + Math.Round((bounds.Width - widgetW) / 2.0);
+            this.Top = taskbarTop + Math.Max(0, (taskbarH - widgetH) / 2.0);
+
+            Config.Left = this.Left;
+            Config.Top = this.Top;
+            ConfigService.Save(Config);
+        }
+
+        public void ApplyTaskbarPreset()
+        {
+            Config.Orientation = "Horizontal";
+            Config.OpacityBg = 0.0;
+            Config.OpacityBorder = 0.0;
+            Config.Pinned = true;
+            ApplyConfig();
+            CenterOnTaskbar();
+        }
+
         public void ApplyConfig()
         {
             // 1. Topmost & Pinned
@@ -141,9 +187,9 @@ namespace AntigravityWidget
             {
                 ViewBars.Orientation = Orientation.Horizontal;
                 ViewBars.Width = double.NaN;
-                Row5h.Width = 110; Row5h.Margin = new Thickness(0, 0, 8, 0);
-                RowWeekly.Width = 110; RowWeekly.Margin = new Thickness(0, 0, 8, 0);
-                RowContext.Width = 110; RowContext.Margin = new Thickness(0, 0, 0, 0);
+                Row5h.Width = 115; Row5h.Margin = new Thickness(0, 0, 10, 0);
+                RowWeekly.Width = 115; RowWeekly.Margin = new Thickness(0, 0, 10, 0);
+                RowContext.Width = 140; RowContext.Margin = new Thickness(0, 0, 0, 0);
 
                 ViewGauges.Orientation = Orientation.Horizontal;
                 GaugeItem5h.Margin = new Thickness(2, 0, 2, 0);
@@ -158,7 +204,7 @@ namespace AntigravityWidget
             else
             {
                 ViewBars.Orientation = Orientation.Vertical;
-                ViewBars.Width = 175;
+                ViewBars.Width = 185;
                 Row5h.Width = double.NaN; Row5h.Margin = new Thickness(0, 0, 0, 3.5);
                 RowWeekly.Width = double.NaN; RowWeekly.Margin = new Thickness(0, 0, 0, 3.5);
                 RowContext.Width = double.NaN; RowContext.Margin = new Thickness(0, 0, 0, 0);
@@ -378,6 +424,16 @@ namespace AntigravityWidget
         private void OnResetPosClick(object sender, RoutedEventArgs e)
         {
             CenterOnScreen();
+        }
+
+        private void OnCenterTaskbarClick(object sender, RoutedEventArgs e)
+        {
+            CenterOnTaskbar();
+        }
+
+        private void OnTaskbarPresetClick(object sender, RoutedEventArgs e)
+        {
+            ApplyTaskbarPreset();
         }
 
         private void OnAutoStartClick(object sender, RoutedEventArgs e)
