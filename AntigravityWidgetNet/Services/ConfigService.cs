@@ -21,6 +21,7 @@ namespace AntigravityWidget.Services
         public bool ShowContext { get; set; } = true;
         public bool ShowSubtitles { get; set; } = true;
         public bool ClickThrough { get; set; } = false;
+        public bool LockToTaskbar { get; set; } = false;
         public string Theme { get; set; } = "Cyan";
     }
 

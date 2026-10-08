@@ -25,6 +25,7 @@ namespace AntigravityWidget
 
             // Setup events
             Loaded += MainWindow_Loaded;
+            Deactivated += (s, e) => EnsureTopmostZOrder();
             MainBorder.MouseLeftButtonDown += MainBorder_MouseLeftButtonDown;
             MainBorder.MouseDown += MainBorder_MouseDown;
 
@@ -38,10 +39,34 @@ namespace AntigravityWidget
 
         private void MainWindow_Loaded(object sender, RoutedEventArgs e)
         {
+            var helper = new WindowInteropHelper(this);
+            if (helper.Handle != IntPtr.Zero)
+            {
+                Win32.SetToolWindowStyle(helper.Handle);
+                var source = HwndSource.FromHwnd(helper.Handle);
+                source?.AddHook(WndProc);
+            }
+
+            if (Config.LockToTaskbar)
+            {
+                Config.Orientation = "Horizontal";
+            }
+
             ApplyPosition();
             ApplyConfig();
+            EnsureTopmostZOrder();
             RefreshDataAsync();
             _timer.Start();
+        }
+
+        private IntPtr WndProc(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
+        {
+            if (msg == Win32.WM_MOUSEACTIVATE)
+            {
+                handled = true;
+                return new IntPtr(Win32.MA_NOACTIVATE);
+            }
+            return IntPtr.Zero;
         }
 
         private void ApplyPosition()
@@ -53,8 +78,9 @@ namespace AntigravityWidget
                 double vWidth = SystemParameters.VirtualScreenWidth;
                 double vHeight = SystemParameters.VirtualScreenHeight;
 
-                if (Config.Left.Value >= vLeft - 100 && Config.Left.Value < (vLeft + vWidth - 40) &&
-                    Config.Top.Value >= vTop - 20 && Config.Top.Value < (vTop + vHeight - 40))
+                // Ensure within virtual screen bounds
+                if (Config.Left.Value >= vLeft - 100 && Config.Left.Value < (vLeft + vWidth) &&
+                    Config.Top.Value >= vTop - 20 && Config.Top.Value < (vTop + vHeight))
                 {
                     this.WindowStartupLocation = WindowStartupLocation.Manual;
                     this.Left = Config.Left.Value;
@@ -68,13 +94,16 @@ namespace AntigravityWidget
 
         public void CenterOnScreen()
         {
+            Config.LockToTaskbar = false;
             double screenW = SystemParameters.PrimaryScreenWidth;
             double screenH = SystemParameters.PrimaryScreenHeight;
             this.Left = (screenW - 200) / 2;
             this.Top = (screenH - 120) / 2;
             Config.Left = this.Left;
             Config.Top = this.Top;
+            ApplyConfig();
             ConfigService.Save(Config);
+            EnsureTopmostZOrder();
         }
 
         public void CenterOnTaskbar()
@@ -83,34 +112,68 @@ namespace AntigravityWidget
             {
                 Config.Orientation = "Horizontal";
             }
+            Config.LockToTaskbar = true;
             ApplyConfig();
 
-            // Determine active screen based on current window position
-            var currentPoint = new System.Drawing.Point((int)Math.Max(0, this.Left), (int)Math.Max(0, this.Top));
-            var screen = System.Windows.Forms.Screen.FromPoint(currentPoint);
-            var bounds = screen.Bounds;
-            var workArea = screen.WorkingArea;
+            // Calculate Taskbar position in WPF DIPs (Device-Independent Pixels)
+            double screenW = SystemParameters.PrimaryScreenWidth;
+            double screenH = SystemParameters.PrimaryScreenHeight;
+            double workBottom = SystemParameters.WorkArea.Bottom;
+            double workTop = SystemParameters.WorkArea.Top;
 
-            // Detect taskbar geometry
-            double taskbarTop = workArea.Bottom;
-            double taskbarH = bounds.Height - workArea.Height;
-            if (workArea.Top > bounds.Top)
+            double taskbarTop = workBottom;
+            double taskbarH = screenH - workBottom;
+
+            // Handle taskbar at top
+            if (workTop > 0)
             {
-                taskbarTop = bounds.Top;
-                taskbarH = workArea.Top - bounds.Top;
+                taskbarTop = 0;
+                taskbarH = workTop;
             }
+
             if (taskbarH <= 0) taskbarH = 48;
 
             this.UpdateLayout();
             double widgetW = this.ActualWidth > 0 ? this.ActualWidth : 385;
             double widgetH = this.ActualHeight > 0 ? this.ActualHeight : 40;
 
-            this.Left = bounds.Left + Math.Round((bounds.Width - widgetW) / 2.0);
-            this.Top = taskbarTop + Math.Max(0, (taskbarH - widgetH) / 2.0);
+            this.Left = Math.Round((screenW - widgetW) / 2.0);
+            this.Top = Math.Round(taskbarTop + Math.Max(0, (taskbarH - widgetH) / 2.0));
 
             Config.Left = this.Left;
             Config.Top = this.Top;
             ConfigService.Save(Config);
+
+            EnsureTopmostZOrder();
+        }
+
+        public void LockPositionToTaskbar()
+        {
+            double screenH = SystemParameters.PrimaryScreenHeight;
+            double workBottom = SystemParameters.WorkArea.Bottom;
+            double workTop = SystemParameters.WorkArea.Top;
+
+            double taskbarTop = workBottom;
+            double taskbarH = screenH - workBottom;
+            if (workTop > 0)
+            {
+                taskbarTop = 0;
+                taskbarH = workTop;
+            }
+            if (taskbarH <= 0) taskbarH = 48;
+
+            this.UpdateLayout();
+            double widgetH = this.ActualHeight > 0 ? this.ActualHeight : 40;
+            this.Top = Math.Round(taskbarTop + Math.Max(0, (taskbarH - widgetH) / 2.0));
+        }
+
+        public void EnsureTopmostZOrder()
+        {
+            var helper = new WindowInteropHelper(this);
+            if (helper.Handle != IntPtr.Zero)
+            {
+                Win32.EnsureTopmost(helper.Handle);
+            }
         }
 
         public void ApplyTaskbarPreset()
@@ -119,6 +182,7 @@ namespace AntigravityWidget
             Config.OpacityBg = 0.0;
             Config.OpacityBorder = 0.0;
             Config.Pinned = true;
+            Config.LockToTaskbar = true;
             ApplyConfig();
             CenterOnTaskbar();
         }
@@ -239,17 +303,21 @@ namespace AntigravityWidget
             // 7. Theme
             ApplyTheme(Config.Theme);
 
-            // 8. Click-Through
+            // 8. Click-Through & Taskbar Owner / Topmost Z-Order
             var helper = new WindowInteropHelper(this);
             if (helper.Handle != IntPtr.Zero)
             {
                 Win32.SetClickThrough(helper.Handle, Config.ClickThrough);
+                Win32.SetTaskbarOwner(helper.Handle, Config.LockToTaskbar);
+                Win32.EnsureTopmost(helper.Handle);
             }
 
-            // 9. Context Menu Checkmarks
+            // 9. Context Menu Checkmarks & Cursor
+            MainBorder.Cursor = Config.LockToTaskbar ? Cursors.Arrow : Cursors.SizeAll;
             CtxAutoStart.IsChecked = ConfigService.IsAutoStartEnabled();
             CtxPin.IsChecked = Config.Pinned;
             CtxClickThrough.IsChecked = Config.ClickThrough;
+            CtxLockTaskbar.IsChecked = Config.LockToTaskbar;
         }
 
         private void ApplyTheme(string theme)
@@ -292,6 +360,8 @@ namespace AntigravityWidget
                 {
                     _timer.Interval = targetInterval;
                 }
+
+                EnsureTopmostZOrder();
             }
             catch { }
             finally
@@ -351,12 +421,25 @@ namespace AntigravityWidget
                 return;
             }
 
+            // Si está bloqueado a la barra de herramientas, no arrastrar para evitar parpadeos y movimientos accidentales
+            if (Config.LockToTaskbar)
+            {
+                return;
+            }
+
             if (e.LeftButton == MouseButtonState.Pressed)
             {
-                DragMove();
+                try
+                {
+                    DragMove();
+                }
+                catch { }
+
                 Config.Left = this.Left;
                 Config.Top = this.Top;
                 ConfigService.Save(Config);
+
+                EnsureTopmostZOrder();
             }
         }
 
@@ -434,6 +517,17 @@ namespace AntigravityWidget
         private void OnTaskbarPresetClick(object sender, RoutedEventArgs e)
         {
             ApplyTaskbarPreset();
+        }
+
+        private void OnLockTaskbarClick(object sender, RoutedEventArgs e)
+        {
+            Config.LockToTaskbar = !Config.LockToTaskbar;
+            if (Config.LockToTaskbar)
+            {
+                Config.Orientation = "Horizontal";
+            }
+            ApplyConfig();
+            ConfigService.Save(Config);
         }
 
         private void OnAutoStartClick(object sender, RoutedEventArgs e)

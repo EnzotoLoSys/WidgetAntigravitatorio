@@ -126,6 +126,7 @@
             <CheckBox x:Name="DlgChkAutoStart" Content="Iniciar automaticamente con Windows" Click="OnAutoStartClick"/>
             <CheckBox x:Name="DlgChkPin" Content="Siempre arriba (Topmost)" IsChecked="True" Click="OnPinClick"/>
             <CheckBox x:Name="DlgChkClickThrough" Content="Modo Fantasma (Click-Through)" Click="OnClickThroughClick"/>
+            <CheckBox x:Name="DlgChkLockTaskbar" Content="Bloquear posicion (evitar arrastrar)" Click="OnLockTaskbarClick"/>
             <CheckBox x:Name="DlgChkTaskbarMode" Content="Modo Barra (Fondo y bordes invisibles)" Click="OnTaskbarModeClick"/>
             <CheckBox x:Name="DlgChkShow5h" Content="Mostrar Limite 5 Horas" IsChecked="True" Click="OnShowVisibilityClick"/>
             <CheckBox x:Name="DlgChkShowWeekly" Content="Mostrar Limite Semanal" IsChecked="True" Click="OnShowVisibilityClick"/>

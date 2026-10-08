@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics;
 using System.Drawing;
 using System.Threading;
 using System.Windows;
@@ -23,9 +24,40 @@ namespace AntigravityWidget
             _ownsMutex = createdNew;
             if (!createdNew)
             {
-                MessageBox.Show("Antigravity Widget ya se encuentra en ejecución.", "Antigravity Widget", MessageBoxButton.OK, MessageBoxImage.Information);
-                Shutdown();
-                return;
+                var result = MessageBox.Show(
+                    "Antigravity Widget ya se encuentra en ejecución.\n\n¿Deseas cerrar la instancia actual e iniciar esta nueva versión?",
+                    "Antigravity Widget",
+                    MessageBoxButton.YesNo,
+                    MessageBoxImage.Question);
+
+                if (result == MessageBoxResult.Yes)
+                {
+                    KillOtherInstances();
+
+                    try
+                    {
+                        _mutex?.Dispose();
+                        _mutex = new Mutex(true, MutexName, out bool reacquired);
+                        if (reacquired)
+                        {
+                            _ownsMutex = true;
+                        }
+                        else
+                        {
+                            _ownsMutex = _mutex.WaitOne(3000);
+                        }
+                    }
+                    catch (AbandonedMutexException)
+                    {
+                        _ownsMutex = true;
+                    }
+                    catch { }
+                }
+                else
+                {
+                    Shutdown();
+                    return;
+                }
             }
 
             base.OnStartup(e);
@@ -34,6 +66,29 @@ namespace AntigravityWidget
             _mainWindow.Show();
 
             SetupNotifyIcon();
+        }
+
+        private static void KillOtherInstances()
+        {
+            try
+            {
+                int currentPid = Environment.ProcessId;
+                string processName = Process.GetCurrentProcess().ProcessName;
+                var processes = Process.GetProcessesByName(processName);
+                foreach (var proc in processes)
+                {
+                    if (proc.Id != currentPid)
+                    {
+                        try
+                        {
+                            proc.Kill();
+                            proc.WaitForExit(3000);
+                        }
+                        catch { }
+                    }
+                }
+            }
+            catch { }
         }
 
         private void SetupNotifyIcon()

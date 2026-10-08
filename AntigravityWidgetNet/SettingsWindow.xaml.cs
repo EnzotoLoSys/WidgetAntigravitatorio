@@ -47,6 +47,7 @@ namespace AntigravityWidget
             DlgChkAutoStart.IsChecked = ConfigService.IsAutoStartEnabled();
             DlgChkPin.IsChecked = _cfg.Pinned;
             DlgChkClickThrough.IsChecked = _cfg.ClickThrough;
+            DlgChkLockTaskbar.IsChecked = _cfg.LockToTaskbar;
             DlgChkTaskbarMode.IsChecked = _cfg.OpacityBg <= 0.05 && _cfg.OpacityBorder <= 0.05;
             DlgChkShow5h.IsChecked = _cfg.Show5h;
             DlgChkShowWeekly.IsChecked = _cfg.ShowWeekly;
@@ -197,13 +198,28 @@ namespace AntigravityWidget
             _mainWindow.ApplyConfig();
         }
 
+        private void OnLockTaskbarClick(object sender, RoutedEventArgs e)
+        {
+            _cfg.LockToTaskbar = DlgChkLockTaskbar.IsChecked ?? false;
+            if (_cfg.LockToTaskbar)
+            {
+                _cfg.Orientation = "Horizontal";
+                UpdateOrientButtons("Horizontal");
+            }
+            _mainWindow.ApplyConfig();
+        }
+
         private void OnResetPosClick(object sender, RoutedEventArgs e)
         {
+            _cfg.LockToTaskbar = false;
+            DlgChkLockTaskbar.IsChecked = false;
             _mainWindow.CenterOnScreen();
         }
 
         private void OnCenterTaskbarClick(object sender, RoutedEventArgs e)
         {
+            _cfg.LockToTaskbar = true;
+            DlgChkLockTaskbar.IsChecked = true;
             _mainWindow.CenterOnTaskbar();
         }
 
@@ -215,6 +231,8 @@ namespace AntigravityWidget
                 _cfg.OpacityBg = 0.0;
                 _cfg.OpacityBorder = 0.0;
                 _cfg.Orientation = "Horizontal";
+                _cfg.LockToTaskbar = true;
+                DlgChkLockTaskbar.IsChecked = true;
                 UpdateOrientButtons("Horizontal");
                 DlgSliderOpacityBg.Value = 0.0;
                 DlgTxtOpacityBgVal.Text = "0%";
