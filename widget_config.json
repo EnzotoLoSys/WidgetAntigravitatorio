@@ -1,9 +1,9 @@
 {
     "Opacity":  0.9,
     "Scale":  1,
-    "Mode":  "Gauges",
-    "Left":  1165.6000000000001,
-    "Top":  356.4,
+    "Mode":  "Chips",
+    "Left":  1264.6000000000001,
+    "Top":  436.4,
     "Pinned":  true,
     "Show5h":  true,
     "ShowWeekly":  true,

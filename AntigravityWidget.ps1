@@ -80,7 +80,7 @@ $xaml = @'
             <ScaleTransform x:Name="UiScale" ScaleX="1.0" ScaleY="1.0"/>
         </Grid.LayoutTransform>
 
-        <!-- Main Card Border (Ultra-Snug, No Wasted Space) -->
+        <!-- Main Card Border (Snug & Ultra-Compact) -->
         <Border Name="MainBorder" CornerRadius="10" BorderThickness="1.2" Cursor="SizeAll">
             <Border.BorderBrush>
                 <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
@@ -103,6 +103,10 @@ $xaml = @'
                         <MenuItem Name="CtxModeBars" Header="Barras"/>
                         <MenuItem Name="CtxModeGauges" Header="Tacometros"/>
                         <MenuItem Name="CtxModeChips" Header="Solo Porcentajes"/>
+                    </MenuItem>
+                    <MenuItem Header="Orientacion">
+                        <MenuItem Name="CtxOrientH" Header="Horizontal (Fila)"/>
+                        <MenuItem Name="CtxOrientV" Header="Vertical (Columna)"/>
                     </MenuItem>
                     <MenuItem Name="CtxSettings" Header="Opciones y Estilo"/>
                     <MenuItem Name="CtxPin" Header="Siempre arriba" IsCheckable="True"/>
@@ -186,16 +190,10 @@ $xaml = @'
                     </StackPanel>
                 </StackPanel>
 
-                <!-- ================= VISTA 2: TACOMETROS RADIALES (SNUG & TIGHT) ================= -->
-                <Grid Name="ViewGauges" Visibility="Collapsed" Margin="0">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto" Name="ColGauge5h"/>
-                        <ColumnDefinition Width="Auto" Name="ColGaugeWeekly"/>
-                        <ColumnDefinition Width="Auto" Name="ColGaugeContext"/>
-                    </Grid.ColumnDefinitions>
-
+                <!-- ================= VISTA 2: TACOMETROS RADIALES ================= -->
+                <StackPanel Name="ViewGauges" Orientation="Horizontal" Visibility="Collapsed" Margin="0">
                     <!-- Gauge 1: 5H -->
-                    <StackPanel Grid.Column="0" Name="GaugeItem5h" Margin="2,0,3,0" HorizontalAlignment="Center">
+                    <StackPanel Name="GaugeItem5h" Margin="2,0,2,0" HorizontalAlignment="Center">
                         <Grid Width="46" Height="46">
                             <Ellipse Stroke="#1E293B" StrokeThickness="4"/>
                             <Ellipse Name="Gauge5hRing" Stroke="#10B981" StrokeThickness="4" StrokeDashArray="21.3 40" RenderTransformOrigin="0.5,0.5">
@@ -209,7 +207,7 @@ $xaml = @'
                     </StackPanel>
 
                     <!-- Gauge 2: Weekly -->
-                    <StackPanel Grid.Column="1" Name="GaugeItemWeekly" Margin="3,0,3,0" HorizontalAlignment="Center">
+                    <StackPanel Name="GaugeItemWeekly" Margin="2,0,2,0" HorizontalAlignment="Center">
                         <Grid Width="46" Height="46">
                             <Ellipse Stroke="#1E293B" StrokeThickness="4"/>
                             <Ellipse Name="GaugeWeeklyRing" Stroke="#38BDF8" StrokeThickness="4" StrokeDashArray="29.5 40" RenderTransformOrigin="0.5,0.5">
@@ -223,7 +221,7 @@ $xaml = @'
                     </StackPanel>
 
                     <!-- Gauge 3: Context -->
-                    <StackPanel Grid.Column="2" Name="GaugeItemContext" Margin="3,0,2,0" HorizontalAlignment="Center">
+                    <StackPanel Name="GaugeItemContext" Margin="2,0,2,0" HorizontalAlignment="Center">
                         <Grid Width="46" Height="46">
                             <Ellipse Stroke="#1E293B" StrokeThickness="4"/>
                             <Ellipse Name="GaugeContextRing" Stroke="#A855F7" StrokeThickness="4" StrokeDashArray="2.0 40" RenderTransformOrigin="0.5,0.5">
@@ -235,18 +233,12 @@ $xaml = @'
                             </StackPanel>
                         </Grid>
                     </StackPanel>
-                </Grid>
+                </StackPanel>
 
                 <!-- ================= VISTA 3: SOLO PORCENTAJES (CHIPS) ================= -->
-                <Grid Name="ViewChips" Visibility="Collapsed" Width="175" Margin="0">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*" Name="ColChip5h"/>
-                        <ColumnDefinition Width="*" Name="ColChipWeekly"/>
-                        <ColumnDefinition Width="*" Name="ColChipContext"/>
-                    </Grid.ColumnDefinitions>
-
+                <StackPanel Name="ViewChips" Orientation="Horizontal" Visibility="Collapsed" Margin="0">
                     <!-- Chip 1: 5H -->
-                    <Border Grid.Column="0" Name="ChipItem5h" Background="#132338" CornerRadius="6" Padding="4,3" Margin="0,0,2,0">
+                    <Border Name="ChipItem5h" Background="#132338" CornerRadius="6" Padding="5,3" Margin="2,0,2,0">
                         <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
                             <TextBlock Text="5 HORAS" FontSize="6.5" FontWeight="Bold" Foreground="#64748B" HorizontalAlignment="Center"/>
                             <TextBlock Name="TxtChip5h" Text="85%" FontSize="10" FontWeight="Bold" Foreground="#4ADE80" HorizontalAlignment="Center"/>
@@ -254,7 +246,7 @@ $xaml = @'
                     </Border>
 
                     <!-- Chip 2: Weekly -->
-                    <Border Grid.Column="1" Name="ChipItemWeekly" Background="#142442" CornerRadius="6" Padding="4,3" Margin="1,0,1,0">
+                    <Border Name="ChipItemWeekly" Background="#142442" CornerRadius="6" Padding="5,3" Margin="2,0,2,0">
                         <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
                             <TextBlock Text="SEMANAL" FontSize="6.5" FontWeight="Bold" Foreground="#64748B" HorizontalAlignment="Center"/>
                             <TextBlock Name="TxtChipWeekly" Text="94%" FontSize="10" FontWeight="Bold" Foreground="#38BDF8" HorizontalAlignment="Center"/>
@@ -262,18 +254,18 @@ $xaml = @'
                     </Border>
 
                     <!-- Chip 3: Context -->
-                    <Border Grid.Column="2" Name="ChipItemContext" Background="#241838" CornerRadius="6" Padding="4,3" Margin="2,0,0,0">
+                    <Border Name="ChipItemContext" Background="#241838" CornerRadius="6" Padding="5,3" Margin="2,0,2,0">
                         <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
                             <TextBlock Text="CONTEXT" FontSize="6.5" FontWeight="Bold" Foreground="#64748B" HorizontalAlignment="Center"/>
                             <TextBlock Name="TxtChipContext" Text="2%" FontSize="10" FontWeight="Bold" Foreground="#C084FC" HorizontalAlignment="Center"/>
                         </StackPanel>
                     </Border>
-                </Grid>
+                </StackPanel>
 
                 <!-- ================= VISTA 4: PANEL DE OPCIONES ================= -->
                 <StackPanel Name="ViewSettings" Visibility="Collapsed" Width="175" Margin="0,1,0,1">
                     <TextBlock Text="MODO VISUAL" FontSize="7.5" FontWeight="Bold" Foreground="#38BDF8" Margin="0,0,0,2"/>
-                    <Grid Margin="0,0,0,4">
+                    <Grid Margin="0,0,0,3">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*"/>
                             <ColumnDefinition Width="*"/>
@@ -288,6 +280,22 @@ $xaml = @'
                             <Button.Resources><Style TargetType="Border"><Setter Property="CornerRadius" Value="3"/></Style></Button.Resources>
                         </Button>
                         <Button Name="BtnStyleChips" Grid.Column="2" Content="Porcentajes" Height="19" Margin="1,0,0,0"
+                                Background="#1E293B" Foreground="#94A3B8" BorderThickness="0" FontSize="8" FontWeight="SemiBold">
+                            <Button.Resources><Style TargetType="Border"><Setter Property="CornerRadius" Value="3"/></Style></Button.Resources>
+                        </Button>
+                    </Grid>
+
+                    <TextBlock Text="ORIENTACION" FontSize="7.5" FontWeight="Bold" Foreground="#38BDF8" Margin="0,2,0,2"/>
+                    <Grid Margin="0,0,0,4">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <Button Name="BtnOrientH" Grid.Column="0" Content="Horizontal" Height="18" Margin="0,0,1,0"
+                                Background="#2563EB" Foreground="#FFFFFF" BorderThickness="0" FontSize="8" FontWeight="SemiBold">
+                            <Button.Resources><Style TargetType="Border"><Setter Property="CornerRadius" Value="3"/></Style></Button.Resources>
+                        </Button>
+                        <Button Name="BtnOrientV" Grid.Column="1" Content="Vertical" Height="18" Margin="1,0,0,0"
                                 Background="#1E293B" Foreground="#94A3B8" BorderThickness="0" FontSize="8" FontWeight="SemiBold">
                             <Button.Resources><Style TargetType="Border"><Setter Property="CornerRadius" Value="3"/></Style></Button.Resources>
                         </Button>
@@ -396,6 +404,9 @@ $btnStyleBars = $window.FindName("BtnStyleBars")
 $btnStyleGauges = $window.FindName("BtnStyleGauges")
 $btnStyleChips = $window.FindName("BtnStyleChips")
 
+$btnOrientH = $window.FindName("BtnOrientH")
+$btnOrientV = $window.FindName("BtnOrientV")
+
 $sliderOpacity = $window.FindName("SliderOpacity")
 $txtOpacityVal = $window.FindName("TxtOpacityVal")
 $sliderScale = $window.FindName("SliderScale")
@@ -409,6 +420,8 @@ $btnSaveSettings = $window.FindName("BtnSaveSettings")
 $ctxModeBars = $window.FindName("CtxModeBars")
 $ctxModeGauges = $window.FindName("CtxModeGauges")
 $ctxModeChips = $window.FindName("CtxModeChips")
+$ctxOrientH = $window.FindName("CtxOrientH")
+$ctxOrientV = $window.FindName("CtxOrientV")
 $ctxSettings = $window.FindName("CtxSettings")
 $ctxPin = $window.FindName("CtxPin")
 $ctxClickThrough = $window.FindName("CtxClickThrough")
@@ -422,6 +435,7 @@ if (-not (Test-Path $configDir)) {
 }
 $configFile = "$configDir\widget_config.json"
 $script:currentMode = "Bars"
+$script:currentOrientation = "Horizontal"
 $script:isClickThrough = $false
 
 function Set-ClickThroughState ($enable) {
@@ -438,6 +452,49 @@ function Set-ClickThroughState ($enable) {
             [Win32WindowTools]::SetClickThrough($hwnd, $script:isClickThrough)
         }
     } catch {}
+}
+
+function Set-WidgetOrientation ($orientation) {
+    $script:currentOrientation = if ($orientation -eq "Vertical") { "Vertical" } else { "Horizontal" }
+
+    $inactiveBg = [System.Windows.Media.BrushConverter]::new().ConvertFromString("#1E293B")
+    $inactiveFg = [System.Windows.Media.BrushConverter]::new().ConvertFromString("#94A3B8")
+    $activeBg = [System.Windows.Media.BrushConverter]::new().ConvertFromString("#2563EB")
+    $activeFg = [System.Windows.Media.BrushConverter]::new().ConvertFromString("#FFFFFF")
+
+    if ($script:currentOrientation -eq "Vertical") {
+        $viewGauges.Orientation = [System.Windows.Controls.Orientation]::Vertical
+        $viewChips.Orientation = [System.Windows.Controls.Orientation]::Vertical
+
+        $gaugeItem5h.Margin = [System.Windows.Thickness]::new(0, 2, 0, 2)
+        $gaugeItemWeekly.Margin = [System.Windows.Thickness]::new(0, 2, 0, 2)
+        $gaugeItemContext.Margin = [System.Windows.Thickness]::new(0, 2, 0, 2)
+
+        $chipItem5h.Margin = [System.Windows.Thickness]::new(0, 2, 0, 2)
+        $chipItemWeekly.Margin = [System.Windows.Thickness]::new(0, 2, 0, 2)
+        $chipItemContext.Margin = [System.Windows.Thickness]::new(0, 2, 0, 2)
+
+        $btnOrientV.Background = $activeBg
+        $btnOrientV.Foreground = $activeFg
+        $btnOrientH.Background = $inactiveBg
+        $btnOrientH.Foreground = $inactiveFg
+    } else {
+        $viewGauges.Orientation = [System.Windows.Controls.Orientation]::Horizontal
+        $viewChips.Orientation = [System.Windows.Controls.Orientation]::Horizontal
+
+        $gaugeItem5h.Margin = [System.Windows.Thickness]::new(2, 0, 2, 0)
+        $gaugeItemWeekly.Margin = [System.Windows.Thickness]::new(2, 0, 2, 0)
+        $gaugeItemContext.Margin = [System.Windows.Thickness]::new(2, 0, 2, 0)
+
+        $chipItem5h.Margin = [System.Windows.Thickness]::new(2, 0, 2, 0)
+        $chipItemWeekly.Margin = [System.Windows.Thickness]::new(2, 0, 2, 0)
+        $chipItemContext.Margin = [System.Windows.Thickness]::new(2, 0, 2, 0)
+
+        $btnOrientH.Background = $activeBg
+        $btnOrientH.Foreground = $activeFg
+        $btnOrientV.Background = $inactiveBg
+        $btnOrientV.Foreground = $inactiveFg
+    }
 }
 
 function Set-WidgetMode ($mode) {
@@ -478,6 +535,7 @@ function Set-WidgetMode ($mode) {
             $btnStyleBars.Foreground = $activeFg
         }
     }
+    Set-WidgetOrientation $script:currentOrientation
     Apply-VisibilityRules
 }
 
@@ -518,6 +576,7 @@ function Save-WidgetConfig {
             Opacity       = $sliderOpacity.Value
             Scale         = $sliderScale.Value
             Mode          = $script:currentMode
+            Orientation   = $script:currentOrientation
             Left          = $window.Left
             Top           = $window.Top
             Pinned        = $window.Topmost
@@ -561,6 +620,7 @@ if (Test-Path $configFile) {
         if ($cfg.ShowContext -ne $null) { $chkShowContext.IsChecked = [bool]$cfg.ShowContext }
         if ($cfg.ShowSubtitles -ne $null) { $chkShowSubtitles.IsChecked = [bool]$cfg.ShowSubtitles }
         if ($cfg.ClickThrough -ne $null) { $script:isClickThrough = [bool]$cfg.ClickThrough }
+        if ($cfg.Orientation) { $script:currentOrientation = $cfg.Orientation }
         if ($cfg.Mode) { Set-WidgetMode $cfg.Mode } else { Set-WidgetMode "Bars" }
     } catch {
         Set-WidgetMode "Bars"
@@ -599,6 +659,18 @@ $mainBorder.Add_MouseLeftButtonUp({
     if ($script:isDragging) {
         $script:isDragging = $false
         $mainBorder.ReleaseMouseCapture()
+        Save-WidgetConfig
+    }
+})
+
+# Middle Click toggles Orientation (Horizontal <-> Vertical)
+$mainBorder.Add_MouseDown({
+    if ($args[0].ChangedButton -eq [System.Windows.Input.MouseButton]::Middle) {
+        if ($script:currentOrientation -eq "Horizontal") {
+            Set-WidgetOrientation "Vertical"
+        } else {
+            Set-WidgetOrientation "Horizontal"
+        }
         Save-WidgetConfig
     }
 })
@@ -644,10 +716,18 @@ $btnStyleBars.Add_Click({ Set-WidgetMode "Bars"; Save-WidgetConfig })
 $btnStyleGauges.Add_Click({ Set-WidgetMode "Gauges"; Save-WidgetConfig })
 $btnStyleChips.Add_Click({ Set-WidgetMode "Chips"; Save-WidgetConfig })
 
+# Settings Orientation Buttons
+$btnOrientH.Add_Click({ Set-WidgetOrientation "Horizontal"; Save-WidgetConfig })
+$btnOrientV.Add_Click({ Set-WidgetOrientation "Vertical"; Save-WidgetConfig })
+
 # Context Menu Items (Right Click on Widget)
 $ctxModeBars.Add_Click({ Set-WidgetMode "Bars"; Save-WidgetConfig })
 $ctxModeGauges.Add_Click({ Set-WidgetMode "Gauges"; Save-WidgetConfig })
 $ctxModeChips.Add_Click({ Set-WidgetMode "Chips"; Save-WidgetConfig })
+
+$ctxOrientH.Add_Click({ Set-WidgetOrientation "Horizontal"; Save-WidgetConfig })
+$ctxOrientV.Add_Click({ Set-WidgetOrientation "Vertical"; Save-WidgetConfig })
+
 $ctxSettings.Add_Click({ Toggle-Settings })
 $ctxPin.IsChecked = $window.Topmost
 $ctxPin.Add_Click({ Toggle-Pin })
@@ -740,6 +820,13 @@ $trayModeGauges.Add_Click({ Set-WidgetMode "Gauges"; Save-WidgetConfig })
 $trayModeChips = $trayModesMenu.DropDownItems.Add("Solo Porcentajes")
 $trayModeChips.Add_Click({ Set-WidgetMode "Chips"; Save-WidgetConfig })
 $contextMenu.Items.Add($trayModesMenu) | Out-Null
+
+$trayOrientMenu = New-Object System.Windows.Forms.ToolStripMenuItem("Orientacion")
+$trayOrientH = $trayOrientMenu.DropDownItems.Add("Horizontal")
+$trayOrientH.Add_Click({ Set-WidgetOrientation "Horizontal"; Save-WidgetConfig })
+$trayOrientV = $trayOrientMenu.DropDownItems.Add("Vertical")
+$trayOrientV.Add_Click({ Set-WidgetOrientation "Vertical"; Save-WidgetConfig })
+$contextMenu.Items.Add($trayOrientMenu) | Out-Null
 
 $traySettingsItem = $contextMenu.Items.Add("Opciones y Estilo")
 $traySettingsItem.Add_Click({
