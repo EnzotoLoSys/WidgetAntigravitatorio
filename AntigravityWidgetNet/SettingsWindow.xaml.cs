@@ -44,6 +44,7 @@ namespace AntigravityWidget
             DlgSliderScale.Value = _cfg.Scale;
             DlgTxtScaleVal.Text = $"{(int)Math.Round(_cfg.Scale * 100)}%";
 
+            DlgChkAutoHide.IsChecked = _cfg.AutoHideWhenIdeClosed;
             DlgChkAutoStart.IsChecked = ConfigService.IsAutoStartEnabled();
             DlgChkPin.IsChecked = _cfg.Pinned;
             DlgChkClickThrough.IsChecked = _cfg.ClickThrough;
@@ -153,6 +154,21 @@ namespace AntigravityWidget
             _cfg.Scale = Math.Round(e.NewValue, 2);
             DlgTxtScaleVal.Text = $"{(int)Math.Round(_cfg.Scale * 100)}%";
             _mainWindow.ApplyConfig();
+        }
+
+        private void OnAutoHideClick(object sender, RoutedEventArgs e)
+        {
+            _cfg.AutoHideWhenIdeClosed = DlgChkAutoHide.IsChecked ?? true;
+            _mainWindow.ApplyConfig();
+            if (!_cfg.AutoHideWhenIdeClosed && _mainWindow.Visibility != Visibility.Visible)
+            {
+                _mainWindow.Show();
+                _mainWindow.EnsureTopmostZOrder();
+            }
+            else if (_cfg.AutoHideWhenIdeClosed && !QuotaService.IsIdeRunning())
+            {
+                _mainWindow.Hide();
+            }
         }
 
         private void OnAutoStartClick(object sender, RoutedEventArgs e)

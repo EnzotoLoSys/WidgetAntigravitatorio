@@ -166,6 +166,7 @@
                     <MenuItem x:Name="CtxResetPos" Header="Centrar en Pantalla" Click="OnResetPosClick"/>
                     <Separator Background="#334155"/>
                     <MenuItem x:Name="CtxLockTaskbar" Header="Bloquear posicion (evitar arrastrar)" IsCheckable="True" Click="OnLockTaskbarClick"/>
+                    <MenuItem x:Name="CtxAutoHide" Header="Auto-ocultar si el IDE/CLI esta cerrado" IsCheckable="True" Click="OnAutoHideClick"/>
                     <MenuItem x:Name="CtxAutoStart" Header="Iniciar con Windows" IsCheckable="True" Click="OnAutoStartClick"/>
                     <MenuItem x:Name="CtxPin" Header="Siempre arriba" IsCheckable="True" Click="OnPinClick"/>
                     <MenuItem x:Name="CtxClickThrough" Header="Modo Fantasma (Click-Through)" IsCheckable="True" Click="OnClickThroughClick"/>

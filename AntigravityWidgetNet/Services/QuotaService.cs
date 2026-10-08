@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Management;
@@ -44,6 +45,22 @@ namespace AntigravityWidget.Services
 
         private static int? _cachedPort = null;
         private static string? _cachedCsrf = null;
+        private static QuotaData? _lastLiveQuota = null;
+
+        public static bool IsIdeRunning()
+        {
+            try
+            {
+                if (Process.GetProcessesByName("Antigravity IDE").Length > 0) return true;
+                if (Process.GetProcessesByName("Antigravity").Length > 0) return true;
+                if (Process.GetProcessesByName("language_server_windows_x64").Length > 0) return true;
+                if (Process.GetProcessesByName("language_server").Length > 0) return true;
+                if (Process.GetProcessesByName("agy").Length > 0) return true;
+                if (Process.GetProcessesByName("antigravity-cli").Length > 0) return true;
+            }
+            catch { }
+            return false;
+        }
 
         public static async Task<QuotaData> CalculateAsync()
         {
@@ -53,10 +70,18 @@ namespace AntigravityWidget.Services
             CalculateLocalMetrics(data);
 
             // 2. Query official Antigravity IDE Language Server API for 100% exact live quota
-            bool apiSuccess = await TryFetchFromLanguageServerAsync(data);
+            bool apiSuccess = false;
+            if (IsIdeRunning())
+            {
+                apiSuccess = await TryFetchFromLanguageServerAsync(data);
+            }
 
-            // 3. If API is not available (e.g. IDE closed), fallback to estimate from transcript logs
-            if (!apiSuccess)
+            // 3. If API succeeds, update cached last live quota; otherwise fallback cleanly without random numbers
+            if (apiSuccess)
+            {
+                _lastLiveQuota = CloneQuota(data);
+            }
+            else
             {
                 CalculateFallbackQuota(data);
             }
@@ -241,27 +266,34 @@ namespace AntigravityWidget.Services
                 DateTime weeklyAgo = now.AddDays(-7);
 
                 string userHome = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
-                string brainRoot = Path.Combine(userHome, ".gemini", "antigravity-ide", "brain");
+                var brainRoots = new List<string>
+                {
+                    Path.Combine(userHome, ".gemini", "antigravity-ide", "brain"),
+                    Path.Combine(userHome, ".gemini", "antigravity-cli", "brain")
+                };
 
                 var candidateFiles = new List<FileInfo>();
                 FileInfo? latestTranscript = null;
 
-                if (Directory.Exists(brainRoot))
+                foreach (var brainRoot in brainRoots)
                 {
-                    var brainDirs = Directory.GetDirectories(brainRoot);
-                    foreach (var convDir in brainDirs)
+                    if (Directory.Exists(brainRoot))
                     {
-                        string logFile = Path.Combine(convDir, ".system_generated", "logs", "transcript.jsonl");
-                        if (File.Exists(logFile))
+                        var brainDirs = Directory.GetDirectories(brainRoot);
+                        foreach (var convDir in brainDirs)
                         {
-                            var fi = new FileInfo(logFile);
-                            if (fi.LastWriteTimeUtc >= weeklyAgo)
+                            string logFile = Path.Combine(convDir, ".system_generated", "logs", "transcript.jsonl");
+                            if (File.Exists(logFile))
                             {
-                                candidateFiles.Add(fi);
-                            }
-                            if (latestTranscript == null || fi.LastWriteTimeUtc > latestTranscript.LastWriteTimeUtc)
-                            {
-                                latestTranscript = fi;
+                                var fi = new FileInfo(logFile);
+                                if (fi.LastWriteTimeUtc >= weeklyAgo)
+                                {
+                                    candidateFiles.Add(fi);
+                                }
+                                if (latestTranscript == null || fi.LastWriteTimeUtc > latestTranscript.LastWriteTimeUtc)
+                                {
+                                    latestTranscript = fi;
+                                }
                             }
                         }
                     }
@@ -317,16 +349,52 @@ namespace AntigravityWidget.Services
         private static void CalculateFallbackQuota(QuotaData data)
         {
             data.IsLiveApi = false;
-            const double max5hRequests = 90.0;
-            double used5hPct = Math.Min(100.0, (data.Count5h / max5hRequests) * 100.0);
-            data.Remain5hPct = Math.Clamp((int)Math.Round(100.0 - used5hPct), 0, 100);
+            bool isRunning = IsIdeRunning();
+            data.ModelGroupName = isRunning ? "CLI / Offline" : "IDE desconectado";
 
-            const double maxWeekly = 500.0;
-            double usedWeeklyPct = Math.Min(100.0, (data.CountWeekly / maxWeekly) * 100.0);
-            data.RemainWeeklyPct = Math.Clamp((int)Math.Round(100.0 - usedWeeklyPct), 0, 100);
-            data.Reset5hText = $"~Est. ({data.Count5h} p)";
-            data.WeeklyDetailsText = $"~Est. ({data.CountWeekly} p)";
-            data.ModelGroupName = "IDE desconectado";
+            if (_lastLiveQuota != null)
+            {
+                data.Remain5hPct = _lastLiveQuota.Remain5hPct;
+                data.RemainWeeklyPct = _lastLiveQuota.RemainWeeklyPct;
+                data.GptRemain5hPct = _lastLiveQuota.GptRemain5hPct;
+                data.GptRemainWeeklyPct = _lastLiveQuota.GptRemainWeeklyPct;
+                data.Reset5hText = isRunning ? $"{data.Count5h} prompts (5h)" : "IDE cerrado";
+                data.WeeklyDetailsText = $"{data.CountWeekly} prompts";
+                data.GptReset5hText = isRunning ? "CLI / Offline" : "IDE cerrado";
+                data.GptWeeklyDetailsText = isRunning ? "CLI / Offline" : "IDE cerrado";
+            }
+            else
+            {
+                data.Remain5hPct = 100;
+                data.RemainWeeklyPct = 100;
+                data.GptRemain5hPct = 100;
+                data.GptRemainWeeklyPct = 100;
+                data.Reset5hText = isRunning ? $"{data.Count5h} prompts (5h)" : "IDE cerrado";
+                data.WeeklyDetailsText = $"{data.CountWeekly} prompts";
+                data.GptReset5hText = isRunning ? "CLI / Offline" : "IDE cerrado";
+                data.GptWeeklyDetailsText = isRunning ? "CLI / Offline" : "IDE cerrado";
+            }
+        }
+
+        private static QuotaData CloneQuota(QuotaData src)
+        {
+            return new QuotaData
+            {
+                IsLiveApi = src.IsLiveApi,
+                Count5h = src.Count5h,
+                CountWeekly = src.CountWeekly,
+                Remain5hPct = src.Remain5hPct,
+                RemainWeeklyPct = src.RemainWeeklyPct,
+                Reset5hText = src.Reset5hText,
+                WeeklyDetailsText = src.WeeklyDetailsText,
+                GptRemain5hPct = src.GptRemain5hPct,
+                GptRemainWeeklyPct = src.GptRemainWeeklyPct,
+                GptReset5hText = src.GptReset5hText,
+                GptWeeklyDetailsText = src.GptWeeklyDetailsText,
+                ContextTokensText = src.ContextTokensText,
+                ContextPct = src.ContextPct,
+                ModelGroupName = src.ModelGroupName
+            };
         }
     }
 }

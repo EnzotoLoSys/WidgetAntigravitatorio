@@ -123,6 +123,7 @@
 
             <!-- Section 5: Opciones / Toggles -->
             <TextBlock Text="OPCIONES GENERALES" FontSize="8.5" FontWeight="Bold" Foreground="#38BDF8" Margin="0,2,0,2"/>
+            <CheckBox x:Name="DlgChkAutoHide" Content="Ocultar automaticamente si el IDE/CLI esta cerrado" Click="OnAutoHideClick"/>
             <CheckBox x:Name="DlgChkAutoStart" Content="Iniciar automaticamente con Windows" Click="OnAutoStartClick"/>
             <CheckBox x:Name="DlgChkPin" Content="Siempre arriba (Topmost)" IsChecked="True" Click="OnPinClick"/>
             <CheckBox x:Name="DlgChkClickThrough" Content="Modo Fantasma (Click-Through)" Click="OnClickThroughClick"/>

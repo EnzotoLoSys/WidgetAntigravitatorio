@@ -9,7 +9,7 @@
     <UseWindowsForms>true</UseWindowsForms>
     <AssemblyName>AntigravityWidget</AssemblyName>
     <RootNamespace>AntigravityWidget</RootNamespace>
-    <Version>0.9.9</Version>
+    <Version>0.9.9.1</Version>
     <Product>Antigravity Desktop Widget</Product>
     <Authors>EnzotoLoSys</Authors>
     <Copyright>Copyright (c) 2026 EnzotoLoSys</Copyright>

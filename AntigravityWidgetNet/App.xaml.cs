@@ -142,6 +142,28 @@ namespace AntigravityWidget
             };
             contextMenu.Items.Add(ghostItem);
 
+            var autoHideItem = new ToolStripMenuItem("Auto-ocultar si el IDE/CLI está cerrado");
+            autoHideItem.Click += (s, e) =>
+            {
+                if (_mainWindow != null)
+                {
+                    _mainWindow.Config.AutoHideWhenIdeClosed = !_mainWindow.Config.AutoHideWhenIdeClosed;
+                    _mainWindow.ApplyConfig();
+                    ConfigService.Save(_mainWindow.Config);
+
+                    if (!_mainWindow.Config.AutoHideWhenIdeClosed && _mainWindow.Visibility != Visibility.Visible)
+                    {
+                        _mainWindow.Show();
+                        _mainWindow.EnsureTopmostZOrder();
+                    }
+                    else if (_mainWindow.Config.AutoHideWhenIdeClosed && !QuotaService.IsIdeRunning())
+                    {
+                        _mainWindow.Hide();
+                    }
+                }
+            };
+            contextMenu.Items.Add(autoHideItem);
+
             contextMenu.Items.Add("Centrar en Barra de Tareas", null, (s, e) => _mainWindow?.CenterOnTaskbar());
             contextMenu.Items.Add("Centrar en Pantalla", null, (s, e) => _mainWindow?.CenterOnScreen());
             contextMenu.Items.Add("Actualizar Métricas", null, (s, e) => _mainWindow?.RefreshDataAsync());
@@ -151,6 +173,7 @@ namespace AntigravityWidget
             contextMenu.Opening += (s, e) =>
             {
                 ghostItem.Checked = _mainWindow?.Config.ClickThrough ?? false;
+                autoHideItem.Checked = _mainWindow?.Config.AutoHideWhenIdeClosed ?? true;
             };
 
             _notifyIcon.ContextMenuStrip = contextMenu;
@@ -158,8 +181,17 @@ namespace AntigravityWidget
             {
                 if (_mainWindow != null)
                 {
-                    _mainWindow.WindowState = WindowState.Normal;
-                    _mainWindow.Activate();
+                    if (_mainWindow.Config.AutoHideWhenIdeClosed && !QuotaService.IsIdeRunning())
+                    {
+                        _notifyIcon.ShowBalloonTip(3000, "Antigravity Widget", "El IDE o la CLI de Antigravity están cerrados.\nEl widget se mostrará automáticamente al abrir Antigravity IDE o la CLI agy.", ToolTipIcon.Info);
+                    }
+                    else
+                    {
+                        _mainWindow.Show();
+                        _mainWindow.WindowState = WindowState.Normal;
+                        _mainWindow.Activate();
+                        _mainWindow.EnsureTopmostZOrder();
+                    }
                 }
             };
         }

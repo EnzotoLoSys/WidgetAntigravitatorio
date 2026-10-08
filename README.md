@@ -1,4 +1,4 @@
-# Antigravity Desktop Widget 🪐 (v0.9.9)
+# Antigravity Desktop Widget 🪐 (v0.9.9.1)
 
 Un widget de escritorio moderno, ultra liviano y de alto rendimiento para **Google Antigravity IDE**, desarrollado en **C# (.NET 8 + WPF)**.
 
@@ -6,11 +6,16 @@ Monitorea en tiempo real tu consumo de cuota de **Gemini** y de **ChatGPT / Clau
 
 ---
 
-## ✨ Novedades de la Versión 0.9.9
+## ✨ Novedades de la Versión 0.9.9.1
 
+- 👁️‍🗨️ **Auto-Ocultar y Auto-Aparición Inteligente**:
+  - Al **cerrar Antigravity IDE**, el widget se oculta automáticamente de forma limpia de tu pantalla para no molestar ni mostrar métricas confusas.
+  - Al **abrir nuevamente Antigravity IDE**, el widget detecta el proceso al instante y reaparece automáticamente en su posición con las métricas 100% actualizadas.
+  - Se puede activar/desactivar en cualquier momento desde **Preferencias**, el **Menú Contextual** o la **Bandeja del Sistema (Tray)**.
+- 🎯 **Eliminación de Métricas Fantasma / Estimaciones Aleatorias**: Cuando el IDE está desconectado, el widget conserva la última cuota real conocida o muestra un estado claro de desconexión sin inventar números estimativos.
 - 🤖 **Soporte Simultáneo para Gemini y ChatGPT / Claude (Todo Junto)**: Monitoreo en tiempo real de los límites de 5 horas y semanales para ambos grupos de modelos de Antigravity IDE (`Gemini Flash/Pro` y `GPT-OSS/Claude Sonnet/Opus`).
 - 📌 **Integración Nativa con la Barra de Tareas (Taskbar Dock & Lock)**:
-  - **Cero parpadeos**: Integración con el Desktop Window Manager (DWM) de Windows mediante `SetTaskbarOwner` (`GWLP_HWNDPARENT`) y estilos extendidos `WS_EX_NOACTIVATE` / `MA_NOACTIVATE`. El widget nunca desaparece ni parpadea al hacer click sobre él o al abrir el menú Inicio de Windows.
+  - **Cero parpadeos**: Integración con el Desktop Window Manager (DWM) de Windows mediante `SetTaskbarOwner` (`GWLP_HWNDPARENT`) y estilos extendidos `WS_EX_NOACTIVATE` / `MA_NOACTIVATE`.
   - **Bloqueo de posición**: Deshabilita el arrastre accidental al estar anclado a la barra de herramientas.
   - **Orientación automática**: Cambia automáticamente a formato **Horizontal** al anclar a la barra de tareas.
 - 🔄 **Reinicio Rápido de Instancia Única**: Si ejecutas el widget y ya hay una instancia abierta, te da la opción de cerrar el proceso anterior y lanzar la nueva versión al instante.

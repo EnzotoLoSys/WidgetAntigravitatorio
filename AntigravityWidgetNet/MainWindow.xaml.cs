@@ -366,6 +366,7 @@ namespace AntigravityWidget
             CtxPin.IsChecked = Config.Pinned;
             CtxClickThrough.IsChecked = Config.ClickThrough;
             CtxLockTaskbar.IsChecked = Config.LockToTaskbar;
+            CtxAutoHide.IsChecked = Config.AutoHideWhenIdeClosed;
         }
 
         private void ApplyTheme(string theme)
@@ -399,11 +400,43 @@ namespace AntigravityWidget
 
             try
             {
+                bool isIdeRunning = QuotaService.IsIdeRunning();
+
+                if (Config.AutoHideWhenIdeClosed)
+                {
+                    if (!isIdeRunning)
+                    {
+                        if (this.Visibility == Visibility.Visible)
+                        {
+                            this.Hide();
+                        }
+                        _timer.Interval = TimeSpan.FromSeconds(2.5);
+                        return;
+                    }
+                    else
+                    {
+                        if (this.Visibility != Visibility.Visible)
+                        {
+                            this.Show();
+                            ApplyPosition();
+                            EnsureTopmostZOrder();
+                        }
+                    }
+                }
+                else
+                {
+                    if (this.Visibility != Visibility.Visible)
+                    {
+                        this.Show();
+                        EnsureTopmostZOrder();
+                    }
+                }
+
                 QuotaData data = await QuotaService.CalculateAsync();
                 UpdateUiWithData(data);
 
-                // Backoff interval: 3s if live language server connected, 10s if offline/estimate
-                var targetInterval = data.IsLiveApi ? TimeSpan.FromSeconds(3) : TimeSpan.FromSeconds(10);
+                // Backoff interval: 3s if live language server connected, 5s if offline
+                var targetInterval = data.IsLiveApi ? TimeSpan.FromSeconds(3) : TimeSpan.FromSeconds(5);
                 if (_timer.Interval != targetInterval)
                 {
                     _timer.Interval = targetInterval;
@@ -624,6 +657,23 @@ namespace AntigravityWidget
             }
             ApplyConfig();
             ConfigService.Save(Config);
+        }
+
+        private void OnAutoHideClick(object sender, RoutedEventArgs e)
+        {
+            Config.AutoHideWhenIdeClosed = !Config.AutoHideWhenIdeClosed;
+            ApplyConfig();
+            ConfigService.Save(Config);
+
+            if (!Config.AutoHideWhenIdeClosed && this.Visibility != Visibility.Visible)
+            {
+                this.Show();
+                EnsureTopmostZOrder();
+            }
+            else if (Config.AutoHideWhenIdeClosed && !QuotaService.IsIdeRunning())
+            {
+                this.Hide();
+            }
         }
 
         private void OnAutoStartClick(object sender, RoutedEventArgs e)
