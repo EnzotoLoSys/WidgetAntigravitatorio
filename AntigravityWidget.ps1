@@ -1,4 +1,4 @@
-Add-Type -AssemblyName PresentationFramework, PresentationCore, WindowsBase, System.Windows.Forms, System.Drawing
+Add-Type -AssemblyName PresentationFramework, PresentationCore, WindowsBase, System.Windows.Forms
 
 # Win32 Window Tools (Click-Through)
 if (-not ([System.Management.Automation.PSTypeName]'Win32WindowTools').Type) {
@@ -77,14 +77,14 @@ $widgetXaml = @'
         <!-- Main Card Border (Snug & Ultra-Compact) -->
         <Border Name="MainBorder" CornerRadius="10" BorderThickness="1.2" Cursor="SizeAll">
             <Border.BorderBrush>
-                <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                <LinearGradientBrush Name="BorderBrushGrad" StartPoint="0,0" EndPoint="1,1" Opacity="1.0">
                     <GradientStop Color="#60A5FA" Offset="0.0"/>
                     <GradientStop Color="#1E293B" Offset="0.5"/>
                     <GradientStop Color="#00F2FE" Offset="1.0"/>
                 </LinearGradientBrush>
             </Border.BorderBrush>
             <Border.Background>
-                <SolidColorBrush Color="#0B0F19" Opacity="0.90"/>
+                <SolidColorBrush Name="BgBrush" Color="#0B0F19" Opacity="0.90"/>
             </Border.Background>
             <Border.Effect>
                 <DropShadowEffect BlurRadius="10" ShadowDepth="2" Direction="270" Color="#000000" Opacity="0.85"/>
@@ -123,12 +123,12 @@ $widgetXaml = @'
                         <Grid Margin="0,0,0,1">
                             <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                                 <Ellipse Width="4" Height="4" Fill="#06B6D4" Margin="0,0,3,0"/>
-                                <TextBlock Text="5 Horas" FontSize="9.5" FontWeight="SemiBold" Foreground="#94A3B8"/>
+                                <TextBlock Name="Lbl5h" Text="5 Horas" FontSize="9.5" FontWeight="SemiBold" Foreground="#94A3B8"/>
                             </StackPanel>
                             <TextBlock Name="Txt5hPct" Text="85%" HorizontalAlignment="Right" FontSize="9.5" FontWeight="Bold" Foreground="#4ADE80"/>
                         </Grid>
                         <Grid Height="4.5">
-                            <Border Background="#1E293B" CornerRadius="2.2"/>
+                            <Border Name="Prog5hBg" Background="#1E293B" CornerRadius="2.2"/>
                             <ProgressBar Name="Prog5h" Value="85" Maximum="100" Height="4.5" BorderThickness="0" Background="Transparent">
                                 <ProgressBar.Foreground>
                                     <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
@@ -146,12 +146,12 @@ $widgetXaml = @'
                         <Grid Margin="0,0,0,1">
                             <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                                 <Ellipse Width="4" Height="4" Fill="#3B82F6" Margin="0,0,3,0"/>
-                                <TextBlock Text="Semana" FontSize="9.5" FontWeight="SemiBold" Foreground="#94A3B8"/>
+                                <TextBlock Name="LblWeekly" Text="Semana" FontSize="9.5" FontWeight="SemiBold" Foreground="#94A3B8"/>
                             </StackPanel>
                             <TextBlock Name="TxtWeeklyPct" Text="94%" HorizontalAlignment="Right" FontSize="9.5" FontWeight="Bold" Foreground="#38BDF8"/>
                         </Grid>
                         <Grid Height="4.5">
-                            <Border Background="#1E293B" CornerRadius="2.2"/>
+                            <Border Name="ProgWeeklyBg" Background="#1E293B" CornerRadius="2.2"/>
                             <ProgressBar Name="ProgWeekly" Value="94" Maximum="100" Height="4.5" BorderThickness="0" Background="Transparent">
                                 <ProgressBar.Foreground>
                                     <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
@@ -169,12 +169,12 @@ $widgetXaml = @'
                         <Grid Margin="0,0,0,1">
                             <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                                 <Ellipse Width="4" Height="4" Fill="#A855F7" Margin="0,0,3,0"/>
-                                <TextBlock Text="Contexto" FontSize="9.5" FontWeight="SemiBold" Foreground="#94A3B8"/>
+                                <TextBlock Name="LblContext" Text="Contexto" FontSize="9.5" FontWeight="SemiBold" Foreground="#94A3B8"/>
                             </StackPanel>
                             <TextBlock Name="TxtContextTokens" Text="18k (2%)" HorizontalAlignment="Right" FontSize="9" Foreground="#C084FC"/>
                         </Grid>
                         <Grid Height="4">
-                            <Border Background="#1E293B" CornerRadius="2"/>
+                            <Border Name="ProgContextBg" Background="#1E293B" CornerRadius="2"/>
                             <ProgressBar Name="ProgContext" Value="2" Maximum="100" Height="4" BorderThickness="0" Background="Transparent">
                                 <ProgressBar.Foreground>
                                     <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
@@ -192,13 +192,13 @@ $widgetXaml = @'
                     <!-- Gauge 1: 5H -->
                     <StackPanel Name="GaugeItem5h" Margin="2,0,2,0" HorizontalAlignment="Center">
                         <Grid Width="46" Height="46">
-                            <Ellipse Stroke="#1E293B" StrokeThickness="4"/>
+                            <Ellipse Name="Gauge5hBgRing" Stroke="#1E293B" StrokeThickness="4"/>
                             <Ellipse Name="Gauge5hRing" Stroke="#10B981" StrokeThickness="4" StrokeDashArray="21.3 40" RenderTransformOrigin="0.5,0.5">
                                 <Ellipse.RenderTransform><RotateTransform Angle="-90"/></Ellipse.RenderTransform>
                             </Ellipse>
                             <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
                                 <TextBlock Name="TxtGauge5hVal" Text="85%" FontWeight="Bold" FontSize="10" HorizontalAlignment="Center" Foreground="#4ADE80"/>
-                                <TextBlock Text="5H" FontSize="6.5" FontWeight="SemiBold" Foreground="#64748B" HorizontalAlignment="Center"/>
+                                <TextBlock Name="LblGauge5h" Text="5H" FontSize="6.5" FontWeight="SemiBold" Foreground="#64748B" HorizontalAlignment="Center"/>
                             </StackPanel>
                         </Grid>
                     </StackPanel>
@@ -206,13 +206,13 @@ $widgetXaml = @'
                     <!-- Gauge 2: Weekly -->
                     <StackPanel Name="GaugeItemWeekly" Margin="2,0,2,0" HorizontalAlignment="Center">
                         <Grid Width="46" Height="46">
-                            <Ellipse Stroke="#1E293B" StrokeThickness="4"/>
+                            <Ellipse Name="GaugeWeeklyBgRing" Stroke="#1E293B" StrokeThickness="4"/>
                             <Ellipse Name="GaugeWeeklyRing" Stroke="#38BDF8" StrokeThickness="4" StrokeDashArray="29.5 40" RenderTransformOrigin="0.5,0.5">
                                 <Ellipse.RenderTransform><RotateTransform Angle="-90"/></Ellipse.RenderTransform>
                             </Ellipse>
                             <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
                                 <TextBlock Name="TxtGaugeWeeklyVal" Text="94%" FontWeight="Bold" FontSize="10" HorizontalAlignment="Center" Foreground="#38BDF8"/>
-                                <TextBlock Text="SEM" FontSize="6.5" FontWeight="SemiBold" Foreground="#64748B" HorizontalAlignment="Center"/>
+                                <TextBlock Name="LblGaugeWeekly" Text="SEM" FontSize="6.5" FontWeight="SemiBold" Foreground="#64748B" HorizontalAlignment="Center"/>
                             </StackPanel>
                         </Grid>
                     </StackPanel>
@@ -220,13 +220,13 @@ $widgetXaml = @'
                     <!-- Gauge 3: Context -->
                     <StackPanel Name="GaugeItemContext" Margin="2,0,2,0" HorizontalAlignment="Center">
                         <Grid Width="46" Height="46">
-                            <Ellipse Stroke="#1E293B" StrokeThickness="4"/>
+                            <Ellipse Name="GaugeContextBgRing" Stroke="#1E293B" StrokeThickness="4"/>
                             <Ellipse Name="GaugeContextRing" Stroke="#A855F7" StrokeThickness="4" StrokeDashArray="2.0 40" RenderTransformOrigin="0.5,0.5">
                                 <Ellipse.RenderTransform><RotateTransform Angle="-90"/></Ellipse.RenderTransform>
                             </Ellipse>
                             <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
                                 <TextBlock Name="TxtGaugeContextVal" Text="2%" FontWeight="Bold" FontSize="10" HorizontalAlignment="Center" Foreground="#C084FC"/>
-                                <TextBlock Text="CTX" FontSize="6.5" FontWeight="SemiBold" Foreground="#64748B" HorizontalAlignment="Center"/>
+                                <TextBlock Name="LblGaugeContext" Text="CTX" FontSize="6.5" FontWeight="SemiBold" Foreground="#64748B" HorizontalAlignment="Center"/>
                             </StackPanel>
                         </Grid>
                     </StackPanel>
@@ -237,7 +237,7 @@ $widgetXaml = @'
                     <!-- Chip 1: 5H -->
                     <Border Name="ChipItem5h" Background="#132338" CornerRadius="6" Padding="5,3" Margin="2,0,2,0">
                         <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
-                            <TextBlock Text="5 HORAS" FontSize="6.5" FontWeight="Bold" Foreground="#64748B" HorizontalAlignment="Center"/>
+                            <TextBlock Name="LblChip5h" Text="5 HORAS" FontSize="6.5" FontWeight="Bold" Foreground="#64748B" HorizontalAlignment="Center"/>
                             <TextBlock Name="TxtChip5h" Text="85%" FontSize="10" FontWeight="Bold" Foreground="#4ADE80" HorizontalAlignment="Center"/>
                         </StackPanel>
                     </Border>
@@ -245,7 +245,7 @@ $widgetXaml = @'
                     <!-- Chip 2: Weekly -->
                     <Border Name="ChipItemWeekly" Background="#142442" CornerRadius="6" Padding="5,3" Margin="2,0,2,0">
                         <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
-                            <TextBlock Text="SEMANAL" FontSize="6.5" FontWeight="Bold" Foreground="#64748B" HorizontalAlignment="Center"/>
+                            <TextBlock Name="LblChipWeekly" Text="SEMANAL" FontSize="6.5" FontWeight="Bold" Foreground="#64748B" HorizontalAlignment="Center"/>
                             <TextBlock Name="TxtChipWeekly" Text="94%" FontSize="10" FontWeight="Bold" Foreground="#38BDF8" HorizontalAlignment="Center"/>
                         </StackPanel>
                     </Border>
@@ -253,7 +253,7 @@ $widgetXaml = @'
                     <!-- Chip 3: Context -->
                     <Border Name="ChipItemContext" Background="#241838" CornerRadius="6" Padding="5,3" Margin="2,0,2,0">
                         <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
-                            <TextBlock Text="CONTEXT" FontSize="6.5" FontWeight="Bold" Foreground="#64748B" HorizontalAlignment="Center"/>
+                            <TextBlock Name="LblChipContext" Text="CONTEXT" FontSize="6.5" FontWeight="Bold" Foreground="#64748B" HorizontalAlignment="Center"/>
                             <TextBlock Name="TxtChipContext" Text="2%" FontSize="10" FontWeight="Bold" Foreground="#C084FC" HorizontalAlignment="Center"/>
                         </StackPanel>
                     </Border>
@@ -269,7 +269,7 @@ $settingsXaml = @'
 <Window xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="Preferencias - Antigravity Widget"
-        Width="320"
+        Width="340"
         SizeToContent="Height"
         ResizeMode="NoResize"
         WindowStyle="None"
@@ -286,9 +286,9 @@ $settingsXaml = @'
         <Style TargetType="CheckBox">
             <Setter Property="FontFamily" Value="Segoe UI"/>
             <Setter Property="Foreground" Value="#CBD5E1"/>
-            <Setter Property="FontSize" Value="10.5"/>
+            <Setter Property="FontSize" Value="10"/>
             <Setter Property="Cursor" Value="Hand"/>
-            <Setter Property="Margin" Value="0,2.5,0,2.5"/>
+            <Setter Property="Margin" Value="0,2,0,2"/>
         </Style>
     </Window.Resources>
 
@@ -299,7 +299,7 @@ $settingsXaml = @'
         <StackPanel Margin="14,12,14,14">
             
             <!-- Header with Title and Close 'X' -->
-            <Grid Margin="0,0,0,10">
+            <Grid Margin="0,0,0,8">
                 <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                     <Ellipse Width="7" Height="7" Fill="#38BDF8" Margin="0,0,6,0"/>
                     <TextBlock Text="Preferencias del Widget" FontSize="12.5" FontWeight="Bold" Foreground="#F8FAFC"/>
@@ -311,8 +311,8 @@ $settingsXaml = @'
             </Grid>
 
             <!-- Section 1: Modo Visual -->
-            <TextBlock Text="MODO VISUAL" FontSize="8.5" FontWeight="Bold" Foreground="#38BDF8" Margin="0,2,0,4"/>
-            <Grid Margin="0,0,0,6">
+            <TextBlock Text="MODO VISUAL" FontSize="8.5" FontWeight="Bold" Foreground="#38BDF8" Margin="0,2,0,3"/>
+            <Grid Margin="0,0,0,5">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="*"/>
@@ -333,8 +333,8 @@ $settingsXaml = @'
             </Grid>
 
             <!-- Section 2: Orientacion -->
-            <TextBlock Text="ORIENTACION" FontSize="8.5" FontWeight="Bold" Foreground="#38BDF8" Margin="0,4,0,4"/>
-            <Grid Margin="0,0,0,8">
+            <TextBlock Text="ORIENTACION" FontSize="8.5" FontWeight="Bold" Foreground="#38BDF8" Margin="0,3,0,3"/>
+            <Grid Margin="0,0,0,6">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="*"/>
@@ -349,8 +349,46 @@ $settingsXaml = @'
                 </Button>
             </Grid>
 
-            <!-- Section 3: Opciones / Toggles -->
-            <TextBlock Text="OPCIONES GENERALES" FontSize="8.5" FontWeight="Bold" Foreground="#38BDF8" Margin="0,2,0,3"/>
+            <!-- Section 3: Sliders de Opacidad Individuales (0% - 100%) -->
+            <TextBlock Text="OPACIDAD POR ELEMENTO (0% - 100%)" FontSize="8.5" FontWeight="Bold" Foreground="#38BDF8" Margin="0,3,0,2"/>
+
+            <!-- Fondo -->
+            <Grid Margin="0,1,0,0">
+                <TextBlock Text="Fondo de la Pastilla" FontSize="9" Foreground="#94A3B8"/>
+                <TextBlock Name="DlgTxtOpacityBgVal" Text="90%" HorizontalAlignment="Right" FontSize="9" FontWeight="Bold" Foreground="#38BDF8"/>
+            </Grid>
+            <Slider Name="DlgSliderOpacityBg" Minimum="0.00" Maximum="1.00" Value="0.90" SmallChange="0.05" LargeChange="0.10" Margin="0,0,0,2"/>
+
+            <!-- Bordes -->
+            <Grid Margin="0,1,0,0">
+                <TextBlock Text="Bordes y Marcos" FontSize="9" Foreground="#94A3B8"/>
+                <TextBlock Name="DlgTxtOpacityBorderVal" Text="100%" HorizontalAlignment="Right" FontSize="9" FontWeight="Bold" Foreground="#38BDF8"/>
+            </Grid>
+            <Slider Name="DlgSliderOpacityBorder" Minimum="0.00" Maximum="1.00" Value="1.00" SmallChange="0.05" LargeChange="0.10" Margin="0,0,0,2"/>
+
+            <!-- Pastillas / Graficos / Barras / Tacometros -->
+            <Grid Margin="0,1,0,0">
+                <TextBlock Text="Pastillas, Barras y Tacometros" FontSize="9" Foreground="#94A3B8"/>
+                <TextBlock Name="DlgTxtOpacityGraphicsVal" Text="100%" HorizontalAlignment="Right" FontSize="9" FontWeight="Bold" Foreground="#38BDF8"/>
+            </Grid>
+            <Slider Name="DlgSliderOpacityGraphics" Minimum="0.00" Maximum="1.00" Value="1.00" SmallChange="0.05" LargeChange="0.10" Margin="0,0,0,2"/>
+
+            <!-- Textos y Porcentajes -->
+            <Grid Margin="0,1,0,0">
+                <TextBlock Text="Textos y Porcentajes" FontSize="9" Foreground="#94A3B8"/>
+                <TextBlock Name="DlgTxtOpacityTextVal" Text="100%" HorizontalAlignment="Right" FontSize="9" FontWeight="Bold" Foreground="#38BDF8"/>
+            </Grid>
+            <Slider Name="DlgSliderOpacityText" Minimum="0.00" Maximum="1.00" Value="1.00" SmallChange="0.05" LargeChange="0.10" Margin="0,0,0,4"/>
+
+            <!-- Section 4: Escala / Zoom -->
+            <Grid Margin="0,2,0,0">
+                <TextBlock Text="Escala / Tamano" FontSize="9" Foreground="#94A3B8"/>
+                <TextBlock Name="DlgTxtScaleVal" Text="100%" HorizontalAlignment="Right" FontSize="9" FontWeight="Bold" Foreground="#38BDF8"/>
+            </Grid>
+            <Slider Name="DlgSliderScale" Minimum="0.60" Maximum="1.40" Value="1.0" SmallChange="0.05" LargeChange="0.1" Margin="0,0,0,5"/>
+
+            <!-- Section 5: Opciones / Toggles -->
+            <TextBlock Text="OPCIONES GENERALES" FontSize="8.5" FontWeight="Bold" Foreground="#38BDF8" Margin="0,2,0,2"/>
             <CheckBox Name="DlgChkAutoStart" Content="Iniciar automaticamente con Windows"/>
             <CheckBox Name="DlgChkPin" Content="Siempre arriba (Topmost)" IsChecked="True"/>
             <CheckBox Name="DlgChkClickThrough" Content="Modo Fantasma (Click-Through)"/>
@@ -359,22 +397,9 @@ $settingsXaml = @'
             <CheckBox Name="DlgChkShowContext" Content="Mostrar Tokens de Contexto" IsChecked="True"/>
             <CheckBox Name="DlgChkShowSubtitles" Content="Mostrar Subtitulos y Detalles" IsChecked="True"/>
 
-            <!-- Section 4: Sliders -->
-            <Grid Margin="0,6,0,2">
-                <TextBlock Text="Opacidad del Widget (Todo)" FontSize="9.5" Foreground="#94A3B8"/>
-                <TextBlock Name="DlgTxtOpacityVal" Text="90%" HorizontalAlignment="Right" FontSize="9.5" FontWeight="Bold" Foreground="#38BDF8"/>
-            </Grid>
-            <Slider Name="DlgSliderOpacity" Minimum="0.15" Maximum="1.00" Value="0.90" SmallChange="0.05" LargeChange="0.1" Margin="0,0,0,4"/>
-
-            <Grid Margin="0,2,0,2">
-                <TextBlock Text="Escala / Tamano" FontSize="9.5" Foreground="#94A3B8"/>
-                <TextBlock Name="DlgTxtScaleVal" Text="100%" HorizontalAlignment="Right" FontSize="9.5" FontWeight="Bold" Foreground="#38BDF8"/>
-            </Grid>
-            <Slider Name="DlgSliderScale" Minimum="0.60" Maximum="1.40" Value="1.0" SmallChange="0.05" LargeChange="0.1" Margin="0,0,0,8"/>
-
-            <!-- Section 5: Temas -->
-            <TextBlock Text="TEMA DE COLOR" FontSize="8.5" FontWeight="Bold" Foreground="#38BDF8" Margin="0,2,0,4"/>
-            <Grid Margin="0,0,0,12">
+            <!-- Section 6: Temas -->
+            <TextBlock Text="TEMA DE COLOR" FontSize="8.5" FontWeight="Bold" Foreground="#38BDF8" Margin="0,3,0,3"/>
+            <Grid Margin="0,0,0,10">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="*"/>
@@ -421,6 +446,8 @@ $settingsWindow = [System.Windows.Markup.XamlReader]::Load($readerSettings)
 
 # Widget UI Handles
 $mainBorder = $window.FindName("MainBorder")
+$borderBrushGrad = $window.FindName("BorderBrushGrad")
+$bgBrush = $window.FindName("BgBrush")
 $rootContainer = $window.FindName("RootContainer")
 $uiScale = $window.FindName("UiScale")
 $viewBars = $window.FindName("ViewBars")
@@ -431,13 +458,33 @@ $row5h = $window.FindName("Row5h")
 $rowWeekly = $window.FindName("RowWeekly")
 $rowContext = $window.FindName("RowContext")
 
+$lbl5h = $window.FindName("Lbl5h")
+$lblWeekly = $window.FindName("LblWeekly")
+$lblContext = $window.FindName("LblContext")
+
+$prog5hBg = $window.FindName("Prog5hBg")
+$progWeeklyBg = $window.FindName("ProgWeeklyBg")
+$progContextBg = $window.FindName("ProgContextBg")
+
 $gaugeItem5h = $window.FindName("GaugeItem5h")
 $gaugeItemWeekly = $window.FindName("GaugeItemWeekly")
 $gaugeItemContext = $window.FindName("GaugeItemContext")
 
+$gauge5hBgRing = $window.FindName("Gauge5hBgRing")
+$gaugeWeeklyBgRing = $window.FindName("GaugeWeeklyBgRing")
+$gaugeContextBgRing = $window.FindName("GaugeContextBgRing")
+
+$lblGauge5h = $window.FindName("LblGauge5h")
+$lblGaugeWeekly = $window.FindName("LblGaugeWeekly")
+$lblGaugeContext = $window.FindName("LblGaugeContext")
+
 $chipItem5h = $window.FindName("ChipItem5h")
 $chipItemWeekly = $window.FindName("ChipItemWeekly")
 $chipItemContext = $window.FindName("ChipItemContext")
+
+$lblChip5h = $window.FindName("LblChip5h")
+$lblChipWeekly = $window.FindName("LblChipWeekly")
+$lblChipContext = $window.FindName("LblChipContext")
 
 $prog5h = $window.FindName("Prog5h")
 $txt5hPct = $window.FindName("Txt5hPct")
@@ -481,6 +528,18 @@ $dlgBtnChips = $settingsWindow.FindName("DlgBtnChips")
 $dlgBtnOrientH = $settingsWindow.FindName("DlgBtnOrientH")
 $dlgBtnOrientV = $settingsWindow.FindName("DlgBtnOrientV")
 
+$dlgSliderOpacityBg = $settingsWindow.FindName("DlgSliderOpacityBg")
+$dlgTxtOpacityBgVal = $settingsWindow.FindName("DlgTxtOpacityBgVal")
+$dlgSliderOpacityBorder = $settingsWindow.FindName("DlgSliderOpacityBorder")
+$dlgTxtOpacityBorderVal = $settingsWindow.FindName("DlgTxtOpacityBorderVal")
+$dlgSliderOpacityGraphics = $settingsWindow.FindName("DlgSliderOpacityGraphics")
+$dlgTxtOpacityGraphicsVal = $settingsWindow.FindName("DlgTxtOpacityGraphicsVal")
+$dlgSliderOpacityText = $settingsWindow.FindName("DlgSliderOpacityText")
+$dlgTxtOpacityTextVal = $settingsWindow.FindName("DlgTxtOpacityTextVal")
+
+$dlgSliderScale = $settingsWindow.FindName("DlgSliderScale")
+$dlgTxtScaleVal = $settingsWindow.FindName("DlgTxtScaleVal")
+
 $dlgChkAutoStart = $settingsWindow.FindName("DlgChkAutoStart")
 $dlgChkPin = $settingsWindow.FindName("DlgChkPin")
 $dlgChkClickThrough = $settingsWindow.FindName("DlgChkClickThrough")
@@ -488,11 +547,6 @@ $dlgChkShow5h = $settingsWindow.FindName("DlgChkShow5h")
 $dlgChkShowWeekly = $settingsWindow.FindName("DlgChkShowWeekly")
 $dlgChkShowContext = $settingsWindow.FindName("DlgChkShowContext")
 $dlgChkShowSubtitles = $settingsWindow.FindName("DlgChkShowSubtitles")
-
-$dlgSliderOpacity = $settingsWindow.FindName("DlgSliderOpacity")
-$dlgTxtOpacityVal = $settingsWindow.FindName("DlgTxtOpacityVal")
-$dlgSliderScale = $settingsWindow.FindName("DlgSliderScale")
-$dlgTxtScaleVal = $settingsWindow.FindName("DlgTxtScaleVal")
 
 $dlgBtnThemeCyan = $settingsWindow.FindName("DlgBtnThemeCyan")
 $dlgBtnThemePurple = $settingsWindow.FindName("DlgBtnThemePurple")
@@ -516,6 +570,12 @@ $script:showWeekly = $true
 $script:showContext = $true
 $script:showSubtitles = $true
 
+# Individual Opacity States
+$script:opacityBg = 0.90
+$script:opacityBorder = 1.00
+$script:opacityGraphics = 1.00
+$script:opacityText = 1.00
+
 # ================= AUTOSTART HELPER =================
 function Get-AutostartState {
     return (Test-Path $startupLnk)
@@ -533,7 +593,8 @@ function Set-AutostartState ($enable) {
             $shortcut.Description = "Antigravity Desktop Widget"
             $shortcut.Save()
             [System.Runtime.InteropServices.Marshal]::ReleaseComObject($wsh) | Out-Null
-        } else {
+        }
+        else {
             if (Test-Path $startupLnk) {
                 Remove-Item -Path $startupLnk -Force -ErrorAction SilentlyContinue
             }
@@ -542,7 +603,8 @@ function Set-AutostartState ($enable) {
         $ctxAutoStart.IsChecked = $isAuto
         $dlgChkAutoStart.IsChecked = $isAuto
         if ($trayAutoStartItem) { $trayAutoStartItem.Checked = $isAuto }
-    } catch {}
+    }
+    catch {}
 }
 
 # ================= CLICK-THROUGH HELPER =================
@@ -558,7 +620,8 @@ function Set-ClickThroughState ($enable) {
         if ($hwnd -ne [IntPtr]::Zero) {
             [Win32WindowTools]::SetClickThrough($hwnd, $script:isClickThrough)
         }
-    } catch {}
+    }
+    catch {}
 }
 
 # ================= RESET POSITION =================
@@ -569,6 +632,65 @@ function Reset-WidgetPosition {
     $window.Left = [Math]::Max(0, ($screen.Width - $w) / 2 + $screen.Left)
     $window.Top = [Math]::Max(0, ($screen.Height - $h) / 2 + $screen.Top)
     Save-WidgetConfig
+}
+
+# ================= OPACITY MANAGERS =================
+function Set-WidgetOpacity ($part, $val) {
+    $val = [double]$val
+    switch ($part) {
+        "Bg" {
+            $script:opacityBg = $val
+            if ($mainBorder -and $mainBorder.Background) {
+                $mainBorder.Background.Opacity = $val
+            }
+            if ($dlgTxtOpacityBgVal) { $dlgTxtOpacityBgVal.Text = ([string][int]($val * 100)) + "%" }
+            if ($dlgSliderOpacityBg -and $dlgSliderOpacityBg.Value -ne $val) { $dlgSliderOpacityBg.Value = $val }
+        }
+        "Border" {
+            $script:opacityBorder = $val
+            if ($mainBorder -and $mainBorder.BorderBrush) {
+                $mainBorder.BorderBrush.Opacity = $val
+            }
+            if ($dlgTxtOpacityBorderVal) { $dlgTxtOpacityBorderVal.Text = ([string][int]($val * 100)) + "%" }
+            if ($dlgSliderOpacityBorder -and $dlgSliderOpacityBorder.Value -ne $val) { $dlgSliderOpacityBorder.Value = $val }
+        }
+        "Graphics" {
+            $script:opacityGraphics = $val
+            if ($prog5h) { $prog5h.Opacity = $val }
+            if ($progWeekly) { $progWeekly.Opacity = $val }
+            if ($progContext) { $progContext.Opacity = $val }
+            if ($prog5hBg) { $prog5hBg.Opacity = $val }
+            if ($progWeeklyBg) { $progWeeklyBg.Opacity = $val }
+            if ($progContextBg) { $progContextBg.Opacity = $val }
+            if ($gauge5hRing) { $gauge5hRing.Opacity = $val }
+            if ($gaugeWeeklyRing) { $gaugeWeeklyRing.Opacity = $val }
+            if ($gaugeContextRing) { $gaugeContextRing.Opacity = $val }
+            if ($gauge5hBgRing) { $gauge5hBgRing.Opacity = $val }
+            if ($gaugeWeeklyBgRing) { $gaugeWeeklyBgRing.Opacity = $val }
+            if ($gaugeContextBgRing) { $gaugeContextBgRing.Opacity = $val }
+            if ($chipItem5h -and $chipItem5h.Background) { $chipItem5h.Background.Opacity = $val }
+            if ($chipItemWeekly -and $chipItemWeekly.Background) { $chipItemWeekly.Background.Opacity = $val }
+            if ($chipItemContext -and $chipItemContext.Background) { $chipItemContext.Background.Opacity = $val }
+            if ($dlgTxtOpacityGraphicsVal) { $dlgTxtOpacityGraphicsVal.Text = ([string][int]($val * 100)) + "%" }
+            if ($dlgSliderOpacityGraphics -and $dlgSliderOpacityGraphics.Value -ne $val) { $dlgSliderOpacityGraphics.Value = $val }
+        }
+        "Text" {
+            $script:opacityText = $val
+            $textItems = @(
+                $txt5hPct, $txt5hReset, $txtWeeklyPct, $txtWeeklyDetails, $txtContextTokens,
+                $txtGauge5hVal, $txtGaugeWeeklyVal, $txtGaugeContextVal,
+                $txtChip5h, $txtChipWeekly, $txtChipContext,
+                $lbl5h, $lblWeekly, $lblContext,
+                $lblGauge5h, $lblGaugeWeekly, $lblGaugeContext,
+                $lblChip5h, $lblChipWeekly, $lblChipContext
+            )
+            foreach ($ti in $textItems) {
+                if ($ti) { $ti.Opacity = $val }
+            }
+            if ($dlgTxtOpacityTextVal) { $dlgTxtOpacityTextVal.Text = ([string][int]($val * 100)) + "%" }
+            if ($dlgSliderOpacityText -and $dlgSliderOpacityText.Value -ne $val) { $dlgSliderOpacityText.Value = $val }
+        }
+    }
 }
 
 # ================= ORIENTATION =================
@@ -596,7 +718,8 @@ function Set-WidgetOrientation ($orientation) {
         $dlgBtnOrientV.Foreground = $activeFg
         $dlgBtnOrientH.Background = $inactiveBg
         $dlgBtnOrientH.Foreground = $inactiveFg
-    } else {
+    }
+    else {
         $viewGauges.Orientation = [System.Windows.Controls.Orientation]::Horizontal
         $viewChips.Orientation = [System.Windows.Controls.Orientation]::Horizontal
 
@@ -655,6 +778,9 @@ function Set-WidgetMode ($mode) {
     }
     Set-WidgetOrientation $script:currentOrientation
     Apply-VisibilityRules
+    # Re-apply opacity to all newly displayed elements
+    Set-WidgetOpacity "Graphics" $script:opacityGraphics
+    Set-WidgetOpacity "Text" $script:opacityText
 }
 
 function Apply-VisibilityRules {
@@ -682,21 +808,25 @@ function Apply-VisibilityRules {
 function Save-WidgetConfig {
     try {
         $cfgObj = [PSCustomObject]@{
-            Opacity       = $dlgSliderOpacity.Value
-            Scale         = $dlgSliderScale.Value
-            Mode          = $script:currentMode
-            Orientation   = $script:currentOrientation
-            Left          = $window.Left
-            Top           = $window.Top
-            Pinned        = $window.Topmost
-            Show5h        = $script:show5h
-            ShowWeekly    = $script:showWeekly
-            ShowContext   = $script:showContext
-            ShowSubtitles = $script:showSubtitles
-            ClickThrough  = $script:isClickThrough
+            OpacityBg       = $script:opacityBg
+            OpacityBorder   = $script:opacityBorder
+            OpacityGraphics = $script:opacityGraphics
+            OpacityText     = $script:opacityText
+            Scale           = $dlgSliderScale.Value
+            Mode            = $script:currentMode
+            Orientation     = $script:currentOrientation
+            Left            = $window.Left
+            Top             = $window.Top
+            Pinned          = $window.Topmost
+            Show5h          = $script:show5h
+            ShowWeekly      = $script:showWeekly
+            ShowContext     = $script:showContext
+            ShowSubtitles   = $script:showSubtitles
+            ClickThrough    = $script:isClickThrough
         }
         $cfgObj | ConvertTo-Json | Set-Content $configFile -Force
-    } catch {}
+    }
+    catch {}
 }
 
 function Toggle-Pin {
@@ -715,7 +845,11 @@ function Show-SettingsDialog {
     $dlgChkShowWeekly.IsChecked = $script:showWeekly
     $dlgChkShowContext.IsChecked = $script:showContext
     $dlgChkShowSubtitles.IsChecked = $script:showSubtitles
-    $dlgSliderOpacity.Value = $window.Opacity
+    
+    $dlgSliderOpacityBg.Value = $script:opacityBg
+    $dlgSliderOpacityBorder.Value = $script:opacityBorder
+    $dlgSliderOpacityGraphics.Value = $script:opacityGraphics
+    $dlgSliderOpacityText.Value = $script:opacityText
     $dlgSliderScale.Value = $uiScale.ScaleX
 
     $settingsWindow.Show()
@@ -736,13 +870,17 @@ function Close-WidgetApp {
 if (Test-Path $configFile) {
     try {
         $cfg = Get-Content $configFile -Raw | ConvertFrom-Json
-        if ($cfg.Opacity) {
-            $dlgSliderOpacity.Value = [double]$cfg.Opacity
-            $window.Opacity = [double]$cfg.Opacity
-            $dlgTxtOpacityVal.Text = ([string][int]($cfg.Opacity * 100)) + "%"
-        } else {
-            $window.Opacity = 0.90
-        }
+        
+        $loadedOpacityBg = if ($cfg.OpacityBg -ne $null) { [double]$cfg.OpacityBg } elseif ($cfg.Opacity -ne $null) { [double]$cfg.Opacity } else { 0.90 }
+        $loadedOpacityBorder = if ($cfg.OpacityBorder -ne $null) { [double]$cfg.OpacityBorder } else { 1.00 }
+        $loadedOpacityGraphics = if ($cfg.OpacityGraphics -ne $null) { [double]$cfg.OpacityGraphics } else { 1.00 }
+        $loadedOpacityText = if ($cfg.OpacityText -ne $null) { [double]$cfg.OpacityText } else { 1.00 }
+
+        Set-WidgetOpacity "Bg" $loadedOpacityBg
+        Set-WidgetOpacity "Border" $loadedOpacityBorder
+        Set-WidgetOpacity "Graphics" $loadedOpacityGraphics
+        Set-WidgetOpacity "Text" $loadedOpacityText
+
         if ($cfg.Scale) {
             $dlgSliderScale.Value = $cfg.Scale
             $uiScale.ScaleX = $cfg.Scale
@@ -766,10 +904,12 @@ if (Test-Path $configFile) {
         if ($cfg.ClickThrough -ne $null) { $script:isClickThrough = [bool]$cfg.ClickThrough }
         if ($cfg.Orientation) { $script:currentOrientation = $cfg.Orientation }
         if ($cfg.Mode) { Set-WidgetMode $cfg.Mode } else { Set-WidgetMode "Bars" }
-    } catch {
+    }
+    catch {
         Set-WidgetMode "Bars"
     }
-} else {
+}
+else {
     Set-WidgetMode "Bars"
 }
 
@@ -778,55 +918,56 @@ $dlgChkAutoStart.IsChecked = Get-AutostartState
 
 # ================= DRAG & DROP =================
 $script:isDragging = $false
-$script:startScreenPos = [System.Drawing.Point]::new(0,0)
+$script:startScreenPos = [System.Drawing.Point]::new(0, 0)
 $script:startWindowLeft = 0
 $script:startWindowTop = 0
 
 $mainBorder.Add_MouseLeftButtonDown({
-    if (-not $script:isClickThrough) {
-        $script:isDragging = $true
-        $script:startScreenPos = [System.Windows.Forms.Cursor]::Position
-        $script:startWindowLeft = $window.Left
-        $script:startWindowTop = $window.Top
-        $mainBorder.CaptureMouse() | Out-Null
-    }
-})
+        if (-not $script:isClickThrough) {
+            $script:isDragging = $true
+            $script:startScreenPos = [System.Windows.Forms.Cursor]::Position
+            $script:startWindowLeft = $window.Left
+            $script:startWindowTop = $window.Top
+            $mainBorder.CaptureMouse() | Out-Null
+        }
+    })
 
 $mainBorder.Add_MouseMove({
-    if ($script:isDragging) {
-        $cur = [System.Windows.Forms.Cursor]::Position
-        $deltaX = $cur.X - $script:startScreenPos.X
-        $deltaY = $cur.Y - $script:startScreenPos.Y
-        $window.Left = $script:startWindowLeft + $deltaX
-        $window.Top = $script:startWindowTop + $deltaY
-    }
-})
+        if ($script:isDragging) {
+            $cur = [System.Windows.Forms.Cursor]::Position
+            $deltaX = $cur.X - $script:startScreenPos.X
+            $deltaY = $cur.Y - $script:startScreenPos.Y
+            $window.Left = $script:startWindowLeft + $deltaX
+            $window.Top = $script:startWindowTop + $deltaY
+        }
+    })
 
 $mainBorder.Add_MouseLeftButtonUp({
-    if ($script:isDragging) {
-        $script:isDragging = $false
-        $mainBorder.ReleaseMouseCapture()
-        Save-WidgetConfig
-    }
-})
+        if ($script:isDragging) {
+            $script:isDragging = $false
+            $mainBorder.ReleaseMouseCapture()
+            Save-WidgetConfig
+        }
+    })
 
 # Middle Click toggles Orientation
 $mainBorder.Add_MouseDown({
-    if ($args[0].ChangedButton -eq [System.Windows.Input.MouseButton]::Middle) {
-        if ($script:currentOrientation -eq "Horizontal") {
-            Set-WidgetOrientation "Vertical"
-        } else {
-            Set-WidgetOrientation "Horizontal"
+        if ($args[0].ChangedButton -eq [System.Windows.Input.MouseButton]::Middle) {
+            if ($script:currentOrientation -eq "Horizontal") {
+                Set-WidgetOrientation "Vertical"
+            }
+            else {
+                Set-WidgetOrientation "Horizontal"
+            }
+            Save-WidgetConfig
         }
-        Save-WidgetConfig
-    }
-})
+    })
 
 # Settings Dialog Dragging
 $settingsBorder = $settingsWindow.Content
 $settingsBorder.Add_MouseLeftButtonDown({
-    $settingsWindow.DragMove()
-})
+        $settingsWindow.DragMove()
+    })
 
 # Context Menu bindings
 $ctxModeBars.Add_Click({ Set-WidgetMode "Bars"; Save-WidgetConfig })
@@ -846,9 +987,9 @@ $ctxClose.Add_Click({ Close-WidgetApp })
 # ================= SETTINGS DIALOG EVENTS =================
 $dlgBtnCloseX.Add_Click({ $settingsWindow.Hide() })
 $dlgBtnSave.Add_Click({
-    Save-WidgetConfig
-    $settingsWindow.Hide()
-})
+        Save-WidgetConfig
+        $settingsWindow.Hide()
+    })
 $dlgBtnResetPos.Add_Click({ Reset-WidgetPosition })
 
 $dlgBtnBars.Add_Click({ Set-WidgetMode "Bars"; Save-WidgetConfig })
@@ -867,47 +1008,51 @@ $dlgChkShowWeekly.Add_Click({ $script:showWeekly = [bool]$dlgChkShowWeekly.IsChe
 $dlgChkShowContext.Add_Click({ $script:showContext = [bool]$dlgChkShowContext.IsChecked; Apply-VisibilityRules; Save-WidgetConfig })
 $dlgChkShowSubtitles.Add_Click({ $script:showSubtitles = [bool]$dlgChkShowSubtitles.IsChecked; Apply-VisibilityRules; Save-WidgetConfig })
 
-$dlgSliderOpacity.Add_ValueChanged({
-    $window.Opacity = $dlgSliderOpacity.Value
-    $dlgTxtOpacityVal.Text = ([string][int]($dlgSliderOpacity.Value * 100)) + "%"
-})
+# Sliders Opacity Events
+$dlgSliderOpacityBg.Add_ValueChanged({ Set-WidgetOpacity "Bg" $dlgSliderOpacityBg.Value })
+$dlgSliderOpacityBorder.Add_ValueChanged({ Set-WidgetOpacity "Border" $dlgSliderOpacityBorder.Value })
+$dlgSliderOpacityGraphics.Add_ValueChanged({ Set-WidgetOpacity "Graphics" $dlgSliderOpacityGraphics.Value })
+$dlgSliderOpacityText.Add_ValueChanged({ Set-WidgetOpacity "Text" $dlgSliderOpacityText.Value })
 
 $dlgSliderScale.Add_ValueChanged({
-    $uiScale.ScaleX = $dlgSliderScale.Value
-    $uiScale.ScaleY = $dlgSliderScale.Value
-    $dlgTxtScaleVal.Text = ([string][int]($dlgSliderScale.Value * 100)) + "%"
-})
+        $uiScale.ScaleX = $dlgSliderScale.Value
+        $uiScale.ScaleY = $dlgSliderScale.Value
+        $dlgTxtScaleVal.Text = ([string][int]($dlgSliderScale.Value * 100)) + "%"
+    })
 
 # Dialog Themes
 $dlgBtnThemeCyan.Add_Click({
-    $grad = [System.Windows.Media.LinearGradientBrush]::new()
-    $grad.StartPoint = [System.Windows.Point]::new(0,0)
-    $grad.EndPoint = [System.Windows.Point]::new(1,1)
-    $grad.GradientStops.Add([System.Windows.Media.GradientStop]::new([System.Windows.Media.ColorConverter]::ConvertFromString("#60A5FA"), 0.0))
-    $grad.GradientStops.Add([System.Windows.Media.GradientStop]::new([System.Windows.Media.ColorConverter]::ConvertFromString("#1E293B"), 0.5))
-    $grad.GradientStops.Add([System.Windows.Media.GradientStop]::new([System.Windows.Media.ColorConverter]::ConvertFromString("#00F2FE"), 1.0))
-    $mainBorder.BorderBrush = $grad
-})
+        $grad = [System.Windows.Media.LinearGradientBrush]::new()
+        $grad.StartPoint = [System.Windows.Point]::new(0, 0)
+        $grad.EndPoint = [System.Windows.Point]::new(1, 1)
+        $grad.Opacity = $script:opacityBorder
+        $grad.GradientStops.Add([System.Windows.Media.GradientStop]::new([System.Windows.Media.ColorConverter]::ConvertFromString("#60A5FA"), 0.0))
+        $grad.GradientStops.Add([System.Windows.Media.GradientStop]::new([System.Windows.Media.ColorConverter]::ConvertFromString("#1E293B"), 0.5))
+        $grad.GradientStops.Add([System.Windows.Media.GradientStop]::new([System.Windows.Media.ColorConverter]::ConvertFromString("#00F2FE"), 1.0))
+        $mainBorder.BorderBrush = $grad
+    })
 
 $dlgBtnThemePurple.Add_Click({
-    $grad = [System.Windows.Media.LinearGradientBrush]::new()
-    $grad.StartPoint = [System.Windows.Point]::new(0,0)
-    $grad.EndPoint = [System.Windows.Point]::new(1,1)
-    $grad.GradientStops.Add([System.Windows.Media.GradientStop]::new([System.Windows.Media.ColorConverter]::ConvertFromString("#C084FC"), 0.0))
-    $grad.GradientStops.Add([System.Windows.Media.GradientStop]::new([System.Windows.Media.ColorConverter]::ConvertFromString("#1E1B4B"), 0.5))
-    $grad.GradientStops.Add([System.Windows.Media.GradientStop]::new([System.Windows.Media.ColorConverter]::ConvertFromString("#F43F5E"), 1.0))
-    $mainBorder.BorderBrush = $grad
-})
+        $grad = [System.Windows.Media.LinearGradientBrush]::new()
+        $grad.StartPoint = [System.Windows.Point]::new(0, 0)
+        $grad.EndPoint = [System.Windows.Point]::new(1, 1)
+        $grad.Opacity = $script:opacityBorder
+        $grad.GradientStops.Add([System.Windows.Media.GradientStop]::new([System.Windows.Media.ColorConverter]::ConvertFromString("#C084FC"), 0.0))
+        $grad.GradientStops.Add([System.Windows.Media.GradientStop]::new([System.Windows.Media.ColorConverter]::ConvertFromString("#1E1B4B"), 0.5))
+        $grad.GradientStops.Add([System.Windows.Media.GradientStop]::new([System.Windows.Media.ColorConverter]::ConvertFromString("#F43F5E"), 1.0))
+        $mainBorder.BorderBrush = $grad
+    })
 
 $dlgBtnThemeGreen.Add_Click({
-    $grad = [System.Windows.Media.LinearGradientBrush]::new()
-    $grad.StartPoint = [System.Windows.Point]::new(0,0)
-    $grad.EndPoint = [System.Windows.Point]::new(1,1)
-    $grad.GradientStops.Add([System.Windows.Media.GradientStop]::new([System.Windows.Media.ColorConverter]::ConvertFromString("#34D399"), 0.0))
-    $grad.GradientStops.Add([System.Windows.Media.GradientStop]::new([System.Windows.Media.ColorConverter]::ConvertFromString("#064E3B"), 0.5))
-    $grad.GradientStops.Add([System.Windows.Media.GradientStop]::new([System.Windows.Media.ColorConverter]::ConvertFromString("#A3E635"), 1.0))
-    $mainBorder.BorderBrush = $grad
-})
+        $grad = [System.Windows.Media.LinearGradientBrush]::new()
+        $grad.StartPoint = [System.Windows.Point]::new(0, 0)
+        $grad.EndPoint = [System.Windows.Point]::new(1, 1)
+        $grad.Opacity = $script:opacityBorder
+        $grad.GradientStops.Add([System.Windows.Media.GradientStop]::new([System.Windows.Media.ColorConverter]::ConvertFromString("#34D399"), 0.0))
+        $grad.GradientStops.Add([System.Windows.Media.GradientStop]::new([System.Windows.Media.ColorConverter]::ConvertFromString("#064E3B"), 0.5))
+        $grad.GradientStops.Add([System.Windows.Media.GradientStop]::new([System.Windows.Media.ColorConverter]::ConvertFromString("#A3E635"), 1.0))
+        $mainBorder.BorderBrush = $grad
+    })
 
 # ================= SYSTEM TRAY / NOTIFY ICON =================
 $notifyIcon = New-Object System.Windows.Forms.NotifyIcon
@@ -931,13 +1076,14 @@ $notifyIcon.Visible = $true
 # Context menu items in tray
 $trayShowItem = $contextMenu.Items.Add("Mostrar / Ocultar")
 $trayShowItem.Add_Click({
-    if ($window.Visibility -eq [System.Windows.Visibility]::Visible) {
-        $window.Visibility = [System.Windows.Visibility]::Hidden
-    } else {
-        $window.Visibility = [System.Windows.Visibility]::Visible
-        $window.Activate()
-    }
-})
+        if ($window.Visibility -eq [System.Windows.Visibility]::Visible) {
+            $window.Visibility = [System.Windows.Visibility]::Hidden
+        }
+        else {
+            $window.Visibility = [System.Windows.Visibility]::Visible
+            $window.Activate()
+        }
+    })
 
 $trayModesMenu = New-Object System.Windows.Forms.ToolStripMenuItem("Cambiar Vista")
 $trayModeBars = $trayModesMenu.DropDownItems.Add("Barras")
@@ -974,9 +1120,9 @@ $trayClickThroughItem = $contextMenu.Items.Add("Modo Fantasma (Click-Through)")
 $trayClickThroughItem.CheckOnClick = $true
 $trayClickThroughItem.Checked = $script:isClickThrough
 $trayClickThroughItem.Add_Click({
-    Set-ClickThroughState $trayClickThroughItem.Checked
-    Save-WidgetConfig
-})
+        Set-ClickThroughState $trayClickThroughItem.Checked
+        Save-WidgetConfig
+    })
 
 $traySettingsItem = $contextMenu.Items.Add("Preferencias...")
 $traySettingsItem.Add_Click({ Show-SettingsDialog })
@@ -993,27 +1139,28 @@ $trayCloseItem.Add_Click({ Close-WidgetApp })
 
 $notifyIcon.ContextMenuStrip = $contextMenu
 $notifyIcon.Add_DoubleClick({
-    if ($window.Visibility -eq [System.Windows.Visibility]::Visible) {
-        $window.Visibility = [System.Windows.Visibility]::Hidden
-    } else {
-        $window.Visibility = [System.Windows.Visibility]::Visible
-        $window.Activate()
-    }
-})
+        if ($window.Visibility -eq [System.Windows.Visibility]::Visible) {
+            $window.Visibility = [System.Windows.Visibility]::Hidden
+        }
+        else {
+            $window.Visibility = [System.Windows.Visibility]::Visible
+            $window.Activate()
+        }
+    })
 
 # Window Loaded & cleanup event
 $window.Add_SourceInitialized({
-    if ($script:isClickThrough) {
-        Set-ClickThroughState $true
-    }
-})
+        if ($script:isClickThrough) {
+            Set-ClickThroughState $true
+        }
+    })
 
 $window.Add_Closed({
-    if ($notifyIcon) {
-        $notifyIcon.Visible = $false
-        $notifyIcon.Dispose()
-    }
-})
+        if ($notifyIcon) {
+            $notifyIcon.Visible = $false
+            $notifyIcon.Dispose()
+        }
+    })
 
 # Logic for data updates
 $candidateGeminiDirs = @(
@@ -1032,7 +1179,7 @@ function Update-WidgetData {
             $brainDir = "$dir\brain"
             if (Test-Path $brainDir) {
                 $found = Get-ChildItem -Path "$brainDir\*\.system_generated\logs\transcript.jsonl" -ErrorAction SilentlyContinue |
-                         Sort-Object LastWriteTime -Descending | Select-Object -First 1
+                Sort-Object LastWriteTime -Descending | Select-Object -First 1
                 if ($found -and (-not $latestTranscript -or $found.LastWriteTime -gt $latestTranscript.LastWriteTime)) {
                     $latestTranscript = $found
                 }
@@ -1051,7 +1198,8 @@ function Update-WidgetData {
         
         if ($contextTokens -ge 1000) {
             $tokenStr = ([string][Math]::Round($contextTokens / 1000, 1)) + "k"
-        } else {
+        }
+        else {
             $tokenStr = [string]$contextTokens
         }
         $txtContextTokens.Text = "$tokenStr (" + [string]$contextPct + "%)"
@@ -1100,9 +1248,11 @@ function Update-WidgetData {
 
         if ($remain5hPct -ge 50) {
             $colorHex = "#4ADE80"
-        } elseif ($remain5hPct -ge 20) {
+        }
+        elseif ($remain5hPct -ge 20) {
             $colorHex = "#FACC15"
-        } else {
+        }
+        else {
             $colorHex = "#F87171"
         }
         $brush = [System.Windows.Media.BrushConverter]::new().ConvertFromString($colorHex)
@@ -1131,21 +1281,128 @@ function Update-WidgetData {
         # Context Gauge ring
         $dCtx = [Math]::Max(0.1, [Math]::Min(31.4, ($contextPct / 100.0) * 31.416))
         $gaugeContextRing.StrokeDashArray = [System.Windows.Media.DoubleCollection]::new(@($dCtx, 40))
+        $contextTokens = 3000
+        if ($latestTranscript) {
+            $fileSize = $latestTranscript.Length
+            $contextTokens = [Math]::Max(1000, [int]($fileSize / 4))
+        }
         
-        $notifyIcon.Text = "Antigravity (5h: " + [string]$remain5hPct + "% | Sem: " + [string]$remainWeeklyPct + "%)"
+        $maxContext = 1000000
+        $contextPct = [Math]::Round(($contextTokens / $maxContext) * 100, 1)
+        $progContext.Value = [Math]::Min(100, [Math]::Max(1, $contextPct))
         
-    } catch { }
+        if ($contextTokens -ge 1000) {
+            $tokenStr = "$([Math]::Round($contextTokens / 1000, 1))k"
+        }
+        else {
+            $tokenStr = "$contextTokens"
+        }
+        $txtContextTokens.Text = "$tokenStr ($contextPct%)"
+        $txtGaugeContextVal.Text = "$contextPct%"
+        
+        # 2. Calculate rolling 5-hour usage
+        $fiveHoursAgo = $now.AddHours(-5)
+        $weeklyAgo = $now.AddDays(-7)
+        
+        $recentCount5h = 0
+        $recentCountWeekly = 0
+        
+        foreach ($dir in $candidateGeminiDirs) {
+            $hPath = "$dir\history.jsonl"
+            if (Test-Path $hPath) {
+                $lines = Get-Content $hPath -Tail 300 -ErrorAction SilentlyContinue
+                foreach ($line in $lines) {
+                    if ($line -match '"timestamp":(\d+)') {
+                        $ts = [long]$matches[1]
+                        $entryDate = [DateTimeOffset]::FromUnixTimeMilliseconds($ts).UtcDateTime
+                        if ($entryDate -ge $fiveHoursAgo) {
+                            $recentCount5h++
+                        }
+                        if ($entryDate -ge $weeklyAgo) {
+                            $recentCountWeekly++
+                        }
+                    }
+                }
+            }
+        }
+        
+        # 5-hour quota estimate
+        $max5hRequests = 50
+        $used5hPct = [Math]::Min(100, ($recentCount5h / $max5hRequests) * 100)
+        $remain5hPct = [Math]::Max(0, 100 - [int]$used5hPct)
+        
+        $prog5h.Value = $remain5hPct
+        $txt5hPct.Text = "$remain5hPct%"
+        $txtGauge5hVal.Text = "$remain5hPct%"
+        
+        if ($remain5hPct -ge 50) {
+            $txt5hPct.Foreground = [System.Windows.Media.BrushConverter]::new().ConvertFromString("#4ADE80")
+            $txtGauge5hVal.Foreground = [System.Windows.Media.BrushConverter]::new().ConvertFromString("#4ADE80")
+        }
+        elseif ($remain5hPct -ge 20) {
+            $txt5hPct.Foreground = [System.Windows.Media.BrushConverter]::new().ConvertFromString("#FACC15")
+            $txtGauge5hVal.Foreground = [System.Windows.Media.BrushConverter]::new().ConvertFromString("#FACC15")
+        }
+        else {
+            $txt5hPct.Foreground = [System.Windows.Media.BrushConverter]::new().ConvertFromString("#F87171")
+            $txtGauge5hVal.Foreground = [System.Windows.Media.BrushConverter]::new().ConvertFromString("#F87171")
+        }
+        
+        $nextResetMin = 60 - ($now.Minute % 60)
+        $txt5hReset.Text = "~$($nextResetMin)m ($recentCount5h p)"
+        
+        # Weekly quota estimate
+        $maxWeekly = 500
+        $usedWeeklyPct = [Math]::Min(100, ($recentCountWeekly / $maxWeekly) * 100)
+        $remainWeeklyPct = [Math]::Max(0, 100 - [int]$usedWeeklyPct)
+        
+        $progWeekly.Value = $remainWeeklyPct
+        $txtWeeklyPct.Text = "$remainWeeklyPct%"
+        $txtGaugeWeeklyVal.Text = "$remainWeeklyPct%"
+        $txtWeeklyDetails.Text = "$recentCountWeekly prompts"
+        
+        $timeStr = (Get-Date).ToString("HH:mm:ss")
+        $txtLastUpdate.Text = "Sync: $timeStr"
+        $notifyIcon.Text = "Antigravity (5h: $remain5hPct% | Sem: $remainWeeklyPct%)"
+        $txt5hPct.Foreground = [System.Windows.Media.BrushConverter]::new().ConvertFromString("#FACC15")
+        $txtGauge5hVal.Foreground = [System.Windows.Media.BrushConverter]::new().ConvertFromString("#FACC15")
+    }
+    else {
+        $txt5hPct.Foreground = [System.Windows.Media.BrushConverter]::new().ConvertFromString("#F87171")
+        $txtGauge5hVal.Foreground = [System.Windows.Media.BrushConverter]::new().ConvertFromString("#F87171")
+    }
+        
+    $nextResetMin = 60 - ($now.Minute % 60)
+    $txt5hReset.Text = "Proximo refresco en: ~$($nextResetMin)m ($recentCount5h prompts en 5h)"
+        
+    # Weekly quota estimate
+    $maxWeekly = 500
+    $usedWeeklyPct = [Math]::Min(100, ($recentCountWeekly / $maxWeekly) * 100)
+    $remainWeeklyPct = [Math]::Max(0, 100 - [int]$usedWeeklyPct)
+        
+    $progWeekly.Value = $remainWeeklyPct
+    $txtWeeklyPct.Text = "$remainWeeklyPct% disp."
+    $txtGaugeWeeklyVal.Text = "$remainWeeklyPct%"
+    $txtWeeklyDetails.Text = "$recentCountWeekly prompts esta semana"
+        
+    $timeStr = (Get-Date).ToString("HH:mm:ss")
+    $txtLastUpdate.Text = "Sync: $timeStr"
+        
+}
+catch {
+    $txtLastUpdate.Text = "Sync: OK"
+}
 }
 
 # Initial trigger
 Update-WidgetData
 
-# Real-time background dispatcher timer
+# Setup real-time background dispatcher timer
 $timer = [System.Windows.Threading.DispatcherTimer]::new()
 $timer.Interval = [TimeSpan]::FromSeconds(4)
 $timer.Add_Tick({
-    Update-WidgetData
-})
+        Update-WidgetData
+    })
 $timer.Start()
 
 # Display GUI

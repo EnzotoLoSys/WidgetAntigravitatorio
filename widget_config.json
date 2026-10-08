@@ -1,10 +1,10 @@
 {
-    "Opacity":  0.1,
+    "Opacity":  0.15,
     "Scale":  1,
     "Mode":  "Chips",
     "Orientation":  "Vertical",
     "Left":  1466.4,
-    "Top":  158.8,
+    "Top":  159.20000000000002,
     "Pinned":  true,
     "Show5h":  true,
     "ShowWeekly":  true,
