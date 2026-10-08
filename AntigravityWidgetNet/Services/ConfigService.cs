@@ -16,6 +16,8 @@ namespace AntigravityWidget.Services
         public double? Left { get; set; }
         public double? Top { get; set; }
         public bool Pinned { get; set; } = true;
+        public bool ShowGemini { get; set; } = true;
+        public bool ShowGpt { get; set; } = true;
         public bool Show5h { get; set; } = true;
         public bool ShowWeekly { get; set; } = true;
         public bool ShowContext { get; set; } = true;

@@ -157,6 +157,10 @@
                         <MenuItem x:Name="CtxOrientH" Header="Horizontal (Fila)" Click="OnOrientHClick"/>
                         <MenuItem x:Name="CtxOrientV" Header="Vertical (Columna)" Click="OnOrientVClick"/>
                     </MenuItem>
+                    <MenuItem Header="Modelos Visibles">
+                        <MenuItem x:Name="CtxShowGemini" Header="Gemini (Flash / Pro)" IsCheckable="True" Click="OnToggleGeminiClick"/>
+                        <MenuItem x:Name="CtxShowGpt" Header="ChatGPT / Claude (GPT / 3P)" IsCheckable="True" Click="OnToggleGptClick"/>
+                    </MenuItem>
                     <MenuItem x:Name="CtxCenterTaskbar" Header="Centrar en Barra de Tareas" Click="OnCenterTaskbarClick"/>
                     <MenuItem x:Name="CtxTaskbarPreset" Header="Preset: Estilo Barra de Tareas" Click="OnTaskbarPresetClick"/>
                     <MenuItem x:Name="CtxResetPos" Header="Centrar en Pantalla" Click="OnResetPosClick"/>
@@ -176,12 +180,12 @@
             <StackPanel Margin="6,5,6,5">
                 <!-- ================= VISTA 1: BARRAS COMPACTAS ================= -->
                 <StackPanel x:Name="ViewBars" Visibility="Visible" Width="175">
-                    <!-- 5-Hour Rolling Limit -->
+                    <!-- 5-Hour Rolling Limit (Gemini) -->
                     <StackPanel x:Name="Row5h" Margin="0,0,0,3.5">
                         <Grid Margin="0,0,0,1">
                             <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                                 <Ellipse Width="4" Height="4" Fill="#06B6D4" Margin="0,0,3,0"/>
-                                <TextBlock x:Name="Lbl5h" Text="5 Horas" FontSize="9.5" FontWeight="SemiBold" Foreground="#94A3B8"/>
+                                <TextBlock x:Name="Lbl5h" Text="Gemini 5h" FontSize="9.5" FontWeight="SemiBold" Foreground="#94A3B8"/>
                             </StackPanel>
                             <TextBlock x:Name="Txt5hPct" Text="85%" HorizontalAlignment="Right" FontSize="9.5" FontWeight="Bold" Foreground="#4ADE80"/>
                         </Grid>
@@ -199,12 +203,12 @@
                         <TextBlock x:Name="Txt5hReset" Text="~30m (0p)" FontSize="7.5" Foreground="#64748B" Margin="0,1,0,0"/>
                     </StackPanel>
 
-                    <!-- Weekly Quota -->
+                    <!-- Weekly Quota (Gemini) -->
                     <StackPanel x:Name="RowWeekly" Margin="0,0,0,3.5">
                         <Grid Margin="0,0,0,1">
                             <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                                 <Ellipse Width="4" Height="4" Fill="#3B82F6" Margin="0,0,3,0"/>
-                                <TextBlock x:Name="LblWeekly" Text="Semana" FontSize="9.5" FontWeight="SemiBold" Foreground="#94A3B8"/>
+                                <TextBlock x:Name="LblWeekly" Text="Gemini Sem" FontSize="9.5" FontWeight="SemiBold" Foreground="#94A3B8"/>
                             </StackPanel>
                             <TextBlock x:Name="TxtWeeklyPct" Text="94%" HorizontalAlignment="Right" FontSize="9.5" FontWeight="Bold" Foreground="#38BDF8"/>
                         </Grid>
@@ -220,6 +224,52 @@
                             </ProgressBar>
                         </Grid>
                         <TextBlock x:Name="TxtWeeklyDetails" Text="0 prompts" FontSize="7.5" Foreground="#64748B" Margin="0,1,0,0"/>
+                    </StackPanel>
+
+                    <!-- 5-Hour Rolling Limit (ChatGPT / Claude) -->
+                    <StackPanel x:Name="RowGpt5h" Margin="0,0,0,3.5">
+                        <Grid Margin="0,0,0,1">
+                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                <Ellipse Width="4" Height="4" Fill="#10B981" Margin="0,0,3,0"/>
+                                <TextBlock x:Name="LblGpt5h" Text="GPT 5h" FontSize="9.5" FontWeight="SemiBold" Foreground="#94A3B8"/>
+                            </StackPanel>
+                            <TextBlock x:Name="TxtGpt5hPct" Text="100%" HorizontalAlignment="Right" FontSize="9.5" FontWeight="Bold" Foreground="#10B981"/>
+                        </Grid>
+                        <Grid Height="4.5">
+                            <Border x:Name="ProgGpt5hBg" Background="#1E293B" CornerRadius="2.2"/>
+                            <ProgressBar x:Name="ProgGpt5h" Value="100" Maximum="100" Height="4.5" BorderThickness="0" Background="Transparent">
+                                <ProgressBar.Foreground>
+                                    <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+                                        <GradientStop Color="#10B981" Offset="0"/>
+                                        <GradientStop Color="#34D399" Offset="1"/>
+                                    </LinearGradientBrush>
+                                </ProgressBar.Foreground>
+                            </ProgressBar>
+                        </Grid>
+                        <TextBlock x:Name="TxtGpt5hReset" Text="100%" FontSize="7.5" Foreground="#64748B" Margin="0,1,0,0"/>
+                    </StackPanel>
+
+                    <!-- Weekly Quota (ChatGPT / Claude) -->
+                    <StackPanel x:Name="RowGptWeekly" Margin="0,0,0,3.5">
+                        <Grid Margin="0,0,0,1">
+                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                <Ellipse Width="4" Height="4" Fill="#F59E0B" Margin="0,0,3,0"/>
+                                <TextBlock x:Name="LblGptWeekly" Text="GPT Sem" FontSize="9.5" FontWeight="SemiBold" Foreground="#94A3B8"/>
+                            </StackPanel>
+                            <TextBlock x:Name="TxtGptWeeklyPct" Text="37%" HorizontalAlignment="Right" FontSize="9.5" FontWeight="Bold" Foreground="#F59E0B"/>
+                        </Grid>
+                        <Grid Height="4.5">
+                            <Border x:Name="ProgGptWeeklyBg" Background="#1E293B" CornerRadius="2.2"/>
+                            <ProgressBar x:Name="ProgGptWeekly" Value="37" Maximum="100" Height="4.5" BorderThickness="0" Background="Transparent">
+                                <ProgressBar.Foreground>
+                                    <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+                                        <GradientStop Color="#F59E0B" Offset="0"/>
+                                        <GradientStop Color="#EF4444" Offset="1"/>
+                                    </LinearGradientBrush>
+                                </ProgressBar.Foreground>
+                            </ProgressBar>
+                        </Grid>
+                        <TextBlock x:Name="TxtGptWeeklyDetails" Text="~5d 12h" FontSize="7.5" Foreground="#64748B" Margin="0,1,0,0"/>
                     </StackPanel>
 
                     <!-- Context Window Tokens -->
@@ -247,7 +297,7 @@
 
                 <!-- ================= VISTA 2: TACOMETROS RADIALES ================= -->
                 <StackPanel x:Name="ViewGauges" Orientation="Horizontal" Visibility="Collapsed" Margin="0">
-                    <!-- Gauge 1: 5H -->
+                    <!-- Gauge 1: Gem 5H -->
                     <StackPanel x:Name="GaugeItem5h" Margin="2,0,2,0" HorizontalAlignment="Center">
                         <Grid Width="46" Height="46">
                             <Ellipse x:Name="Gauge5hBgRing" Stroke="#1E293B" StrokeThickness="4"/>
@@ -256,12 +306,12 @@
                             </Ellipse>
                             <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
                                 <TextBlock x:Name="TxtGauge5hVal" Text="85%" FontWeight="Bold" FontSize="10" HorizontalAlignment="Center" Foreground="#4ADE80"/>
-                                <TextBlock x:Name="LblGauge5h" Text="5H" FontSize="6.5" FontWeight="SemiBold" Foreground="#64748B" HorizontalAlignment="Center"/>
+                                <TextBlock x:Name="LblGauge5h" Text="GEM 5H" FontSize="6.0" FontWeight="SemiBold" Foreground="#64748B" HorizontalAlignment="Center"/>
                             </StackPanel>
                         </Grid>
                     </StackPanel>
 
-                    <!-- Gauge 2: Weekly -->
+                    <!-- Gauge 2: Gem Weekly -->
                     <StackPanel x:Name="GaugeItemWeekly" Margin="2,0,2,0" HorizontalAlignment="Center">
                         <Grid Width="46" Height="46">
                             <Ellipse x:Name="GaugeWeeklyBgRing" Stroke="#1E293B" StrokeThickness="4"/>
@@ -270,12 +320,40 @@
                             </Ellipse>
                             <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
                                 <TextBlock x:Name="TxtGaugeWeeklyVal" Text="94%" FontWeight="Bold" FontSize="10" HorizontalAlignment="Center" Foreground="#38BDF8"/>
-                                <TextBlock x:Name="LblGaugeWeekly" Text="SEM" FontSize="6.5" FontWeight="SemiBold" Foreground="#64748B" HorizontalAlignment="Center"/>
+                                <TextBlock x:Name="LblGaugeWeekly" Text="GEM SEM" FontSize="6.0" FontWeight="SemiBold" Foreground="#64748B" HorizontalAlignment="Center"/>
                             </StackPanel>
                         </Grid>
                     </StackPanel>
 
-                    <!-- Gauge 3: Context -->
+                    <!-- Gauge 3: GPT 5H -->
+                    <StackPanel x:Name="GaugeItemGpt5h" Margin="2,0,2,0" HorizontalAlignment="Center">
+                        <Grid Width="46" Height="46">
+                            <Ellipse x:Name="GaugeGpt5hBgRing" Stroke="#1E293B" StrokeThickness="4"/>
+                            <Ellipse x:Name="GaugeGpt5hRing" Stroke="#10B981" StrokeThickness="4" StrokeDashArray="33 40" RenderTransformOrigin="0.5,0.5">
+                                <Ellipse.RenderTransform><RotateTransform Angle="-90"/></Ellipse.RenderTransform>
+                            </Ellipse>
+                            <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+                                <TextBlock x:Name="TxtGaugeGpt5hVal" Text="100%" FontWeight="Bold" FontSize="10" HorizontalAlignment="Center" Foreground="#10B981"/>
+                                <TextBlock x:Name="LblGaugeGpt5h" Text="GPT 5H" FontSize="6.0" FontWeight="SemiBold" Foreground="#64748B" HorizontalAlignment="Center"/>
+                            </StackPanel>
+                        </Grid>
+                    </StackPanel>
+
+                    <!-- Gauge 4: GPT Weekly -->
+                    <StackPanel x:Name="GaugeItemGptWeekly" Margin="2,0,2,0" HorizontalAlignment="Center">
+                        <Grid Width="46" Height="46">
+                            <Ellipse x:Name="GaugeGptWeeklyBgRing" Stroke="#1E293B" StrokeThickness="4"/>
+                            <Ellipse x:Name="GaugeGptWeeklyRing" Stroke="#F59E0B" StrokeThickness="4" StrokeDashArray="12.3 40" RenderTransformOrigin="0.5,0.5">
+                                <Ellipse.RenderTransform><RotateTransform Angle="-90"/></Ellipse.RenderTransform>
+                            </Ellipse>
+                            <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+                                <TextBlock x:Name="TxtGaugeGptWeeklyVal" Text="37%" FontWeight="Bold" FontSize="10" HorizontalAlignment="Center" Foreground="#F59E0B"/>
+                                <TextBlock x:Name="LblGaugeGptWeekly" Text="GPT SEM" FontSize="6.0" FontWeight="SemiBold" Foreground="#64748B" HorizontalAlignment="Center"/>
+                            </StackPanel>
+                        </Grid>
+                    </StackPanel>
+
+                    <!-- Gauge 5: Context -->
                     <StackPanel x:Name="GaugeItemContext" Margin="2,0,2,0" HorizontalAlignment="Center">
                         <Grid Width="46" Height="46">
                             <Ellipse x:Name="GaugeContextBgRing" Stroke="#1E293B" StrokeThickness="4"/>
@@ -284,7 +362,7 @@
                             </Ellipse>
                             <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
                                 <TextBlock x:Name="TxtGaugeContextVal" Text="2%" FontWeight="Bold" FontSize="10" HorizontalAlignment="Center" Foreground="#C084FC"/>
-                                <TextBlock x:Name="LblGaugeContext" Text="CTX" FontSize="6.5" FontWeight="SemiBold" Foreground="#64748B" HorizontalAlignment="Center"/>
+                                <TextBlock x:Name="LblGaugeContext" Text="CTX" FontSize="6.0" FontWeight="SemiBold" Foreground="#64748B" HorizontalAlignment="Center"/>
                             </StackPanel>
                         </Grid>
                     </StackPanel>
@@ -292,23 +370,39 @@
 
                 <!-- ================= VISTA 3: SOLO PORCENTAJES (CHIPS) ================= -->
                 <StackPanel x:Name="ViewChips" Orientation="Horizontal" Visibility="Collapsed" Margin="0">
-                    <!-- Chip 1: 5H -->
+                    <!-- Chip 1: Gem 5H -->
                     <Border x:Name="ChipItem5h" Background="#132338" CornerRadius="6" Padding="5,3" Margin="2,0,2,0">
                         <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
-                            <TextBlock x:Name="LblChip5h" Text="5 HORAS" FontSize="6.5" FontWeight="Bold" Foreground="#64748B" HorizontalAlignment="Center"/>
+                            <TextBlock x:Name="LblChip5h" Text="GEM 5H" FontSize="6.5" FontWeight="Bold" Foreground="#64748B" HorizontalAlignment="Center"/>
                             <TextBlock x:Name="TxtChip5h" Text="85%" FontSize="10" FontWeight="Bold" Foreground="#4ADE80" HorizontalAlignment="Center"/>
                         </StackPanel>
                     </Border>
 
-                    <!-- Chip 2: Weekly -->
+                    <!-- Chip 2: Gem Weekly -->
                     <Border x:Name="ChipItemWeekly" Background="#142442" CornerRadius="6" Padding="5,3" Margin="2,0,2,0">
                         <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
-                            <TextBlock x:Name="LblChipWeekly" Text="SEMANAL" FontSize="6.5" FontWeight="Bold" Foreground="#64748B" HorizontalAlignment="Center"/>
+                            <TextBlock x:Name="LblChipWeekly" Text="GEM SEM" FontSize="6.5" FontWeight="Bold" Foreground="#64748B" HorizontalAlignment="Center"/>
                             <TextBlock x:Name="TxtChipWeekly" Text="94%" FontSize="10" FontWeight="Bold" Foreground="#38BDF8" HorizontalAlignment="Center"/>
                         </StackPanel>
                     </Border>
 
-                    <!-- Chip 3: Context -->
+                    <!-- Chip 3: GPT 5H -->
+                    <Border x:Name="ChipItemGpt5h" Background="#132B25" CornerRadius="6" Padding="5,3" Margin="2,0,2,0">
+                        <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                            <TextBlock x:Name="LblChipGpt5h" Text="GPT 5H" FontSize="6.5" FontWeight="Bold" Foreground="#64748B" HorizontalAlignment="Center"/>
+                            <TextBlock x:Name="TxtChipGpt5h" Text="100%" FontSize="10" FontWeight="Bold" Foreground="#10B981" HorizontalAlignment="Center"/>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- Chip 4: GPT Weekly -->
+                    <Border x:Name="ChipItemGptWeekly" Background="#2B2313" CornerRadius="6" Padding="5,3" Margin="2,0,2,0">
+                        <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                            <TextBlock x:Name="LblChipGptWeekly" Text="GPT SEM" FontSize="6.5" FontWeight="Bold" Foreground="#64748B" HorizontalAlignment="Center"/>
+                            <TextBlock x:Name="TxtChipGptWeekly" Text="37%" FontSize="10" FontWeight="Bold" Foreground="#F59E0B" HorizontalAlignment="Center"/>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- Chip 5: Context -->
                     <Border x:Name="ChipItemContext" Background="#241838" CornerRadius="6" Padding="5,3" Margin="2,0,2,0">
                         <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
                             <TextBlock x:Name="LblChipContext" Text="CONTEXT" FontSize="6.5" FontWeight="Bold" Foreground="#64748B" HorizontalAlignment="Center"/>

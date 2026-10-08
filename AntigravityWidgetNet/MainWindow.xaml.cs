@@ -203,18 +203,28 @@ namespace AntigravityWidget
             double gOp = Config.OpacityGraphics;
             Prog5h.Opacity = gOp;
             ProgWeekly.Opacity = gOp;
+            ProgGpt5h.Opacity = gOp;
+            ProgGptWeekly.Opacity = gOp;
             ProgContext.Opacity = gOp;
             Prog5hBg.Opacity = gOp;
             ProgWeeklyBg.Opacity = gOp;
+            ProgGpt5hBg.Opacity = gOp;
+            ProgGptWeeklyBg.Opacity = gOp;
             ProgContextBg.Opacity = gOp;
             Gauge5hRing.Opacity = gOp;
             GaugeWeeklyRing.Opacity = gOp;
+            GaugeGpt5hRing.Opacity = gOp;
+            GaugeGptWeeklyRing.Opacity = gOp;
             GaugeContextRing.Opacity = gOp;
             Gauge5hBgRing.Opacity = gOp;
             GaugeWeeklyBgRing.Opacity = gOp;
+            GaugeGpt5hBgRing.Opacity = gOp;
+            GaugeGptWeeklyBgRing.Opacity = gOp;
             GaugeContextBgRing.Opacity = gOp;
             ChipItem5h.Opacity = gOp;
             ChipItemWeekly.Opacity = gOp;
+            ChipItemGpt5h.Opacity = gOp;
+            ChipItemGptWeekly.Opacity = gOp;
             ChipItemContext.Opacity = gOp;
 
             double tOp = Config.OpacityText;
@@ -224,18 +234,32 @@ namespace AntigravityWidget
             LblWeekly.Opacity = tOp;
             TxtWeeklyPct.Opacity = tOp;
             TxtWeeklyDetails.Opacity = tOp;
+            LblGpt5h.Opacity = tOp;
+            TxtGpt5hPct.Opacity = tOp;
+            TxtGpt5hReset.Opacity = tOp;
+            LblGptWeekly.Opacity = tOp;
+            TxtGptWeeklyPct.Opacity = tOp;
+            TxtGptWeeklyDetails.Opacity = tOp;
             LblContext.Opacity = tOp;
             TxtContextTokens.Opacity = tOp;
             TxtGauge5hVal.Opacity = tOp;
             LblGauge5h.Opacity = tOp;
             TxtGaugeWeeklyVal.Opacity = tOp;
             LblGaugeWeekly.Opacity = tOp;
+            TxtGaugeGpt5hVal.Opacity = tOp;
+            LblGaugeGpt5h.Opacity = tOp;
+            TxtGaugeGptWeeklyVal.Opacity = tOp;
+            LblGaugeGptWeekly.Opacity = tOp;
             TxtGaugeContextVal.Opacity = tOp;
             LblGaugeContext.Opacity = tOp;
             LblChip5h.Opacity = tOp;
             TxtChip5h.Opacity = tOp;
             LblChipWeekly.Opacity = tOp;
             TxtChipWeekly.Opacity = tOp;
+            LblChipGpt5h.Opacity = tOp;
+            TxtChipGpt5h.Opacity = tOp;
+            LblChipGptWeekly.Opacity = tOp;
+            TxtChipGptWeekly.Opacity = tOp;
             LblChipContext.Opacity = tOp;
             TxtChipContext.Opacity = tOp;
 
@@ -251,18 +275,24 @@ namespace AntigravityWidget
             {
                 ViewBars.Orientation = Orientation.Horizontal;
                 ViewBars.Width = double.NaN;
-                Row5h.Width = 115; Row5h.Margin = new Thickness(0, 0, 10, 0);
-                RowWeekly.Width = 115; RowWeekly.Margin = new Thickness(0, 0, 10, 0);
-                RowContext.Width = 140; RowContext.Margin = new Thickness(0, 0, 0, 0);
+                Row5h.Width = 115; Row5h.Margin = new Thickness(0, 0, 8, 0);
+                RowWeekly.Width = 115; RowWeekly.Margin = new Thickness(0, 0, 8, 0);
+                RowGpt5h.Width = 115; RowGpt5h.Margin = new Thickness(0, 0, 8, 0);
+                RowGptWeekly.Width = 115; RowGptWeekly.Margin = new Thickness(0, 0, 8, 0);
+                RowContext.Width = 135; RowContext.Margin = new Thickness(0, 0, 0, 0);
 
                 ViewGauges.Orientation = Orientation.Horizontal;
                 GaugeItem5h.Margin = new Thickness(2, 0, 2, 0);
                 GaugeItemWeekly.Margin = new Thickness(2, 0, 2, 0);
+                GaugeItemGpt5h.Margin = new Thickness(2, 0, 2, 0);
+                GaugeItemGptWeekly.Margin = new Thickness(2, 0, 2, 0);
                 GaugeItemContext.Margin = new Thickness(2, 0, 2, 0);
 
                 ViewChips.Orientation = Orientation.Horizontal;
                 ChipItem5h.Margin = new Thickness(2, 0, 2, 0);
                 ChipItemWeekly.Margin = new Thickness(2, 0, 2, 0);
+                ChipItemGpt5h.Margin = new Thickness(2, 0, 2, 0);
+                ChipItemGptWeekly.Margin = new Thickness(2, 0, 2, 0);
                 ChipItemContext.Margin = new Thickness(2, 0, 2, 0);
             }
             else
@@ -271,27 +301,41 @@ namespace AntigravityWidget
                 ViewBars.Width = 185;
                 Row5h.Width = double.NaN; Row5h.Margin = new Thickness(0, 0, 0, 3.5);
                 RowWeekly.Width = double.NaN; RowWeekly.Margin = new Thickness(0, 0, 0, 3.5);
+                RowGpt5h.Width = double.NaN; RowGpt5h.Margin = new Thickness(0, 0, 0, 3.5);
+                RowGptWeekly.Width = double.NaN; RowGptWeekly.Margin = new Thickness(0, 0, 0, 3.5);
                 RowContext.Width = double.NaN; RowContext.Margin = new Thickness(0, 0, 0, 0);
 
                 ViewGauges.Orientation = Orientation.Vertical;
                 GaugeItem5h.Margin = new Thickness(0, 2, 0, 2);
                 GaugeItemWeekly.Margin = new Thickness(0, 2, 0, 2);
+                GaugeItemGpt5h.Margin = new Thickness(0, 2, 0, 2);
+                GaugeItemGptWeekly.Margin = new Thickness(0, 2, 0, 2);
                 GaugeItemContext.Margin = new Thickness(0, 2, 0, 2);
 
                 ViewChips.Orientation = Orientation.Vertical;
                 ChipItem5h.Margin = new Thickness(0, 2, 0, 2);
                 ChipItemWeekly.Margin = new Thickness(0, 2, 0, 2);
+                ChipItemGpt5h.Margin = new Thickness(0, 2, 0, 2);
+                ChipItemGptWeekly.Margin = new Thickness(0, 2, 0, 2);
                 ChipItemContext.Margin = new Thickness(0, 2, 0, 2);
             }
 
             // 6. Section Visibility Toggles
-            Row5h.Visibility = Config.Show5h ? Visibility.Visible : Visibility.Collapsed;
-            GaugeItem5h.Visibility = Config.Show5h ? Visibility.Visible : Visibility.Collapsed;
-            ChipItem5h.Visibility = Config.Show5h ? Visibility.Visible : Visibility.Collapsed;
+            Row5h.Visibility = (Config.ShowGemini && Config.Show5h) ? Visibility.Visible : Visibility.Collapsed;
+            GaugeItem5h.Visibility = (Config.ShowGemini && Config.Show5h) ? Visibility.Visible : Visibility.Collapsed;
+            ChipItem5h.Visibility = (Config.ShowGemini && Config.Show5h) ? Visibility.Visible : Visibility.Collapsed;
 
-            RowWeekly.Visibility = Config.ShowWeekly ? Visibility.Visible : Visibility.Collapsed;
-            GaugeItemWeekly.Visibility = Config.ShowWeekly ? Visibility.Visible : Visibility.Collapsed;
-            ChipItemWeekly.Visibility = Config.ShowWeekly ? Visibility.Visible : Visibility.Collapsed;
+            RowWeekly.Visibility = (Config.ShowGemini && Config.ShowWeekly) ? Visibility.Visible : Visibility.Collapsed;
+            GaugeItemWeekly.Visibility = (Config.ShowGemini && Config.ShowWeekly) ? Visibility.Visible : Visibility.Collapsed;
+            ChipItemWeekly.Visibility = (Config.ShowGemini && Config.ShowWeekly) ? Visibility.Visible : Visibility.Collapsed;
+
+            RowGpt5h.Visibility = (Config.ShowGpt && Config.Show5h) ? Visibility.Visible : Visibility.Collapsed;
+            GaugeItemGpt5h.Visibility = (Config.ShowGpt && Config.Show5h) ? Visibility.Visible : Visibility.Collapsed;
+            ChipItemGpt5h.Visibility = (Config.ShowGpt && Config.Show5h) ? Visibility.Visible : Visibility.Collapsed;
+
+            RowGptWeekly.Visibility = (Config.ShowGpt && Config.ShowWeekly) ? Visibility.Visible : Visibility.Collapsed;
+            GaugeItemGptWeekly.Visibility = (Config.ShowGpt && Config.ShowWeekly) ? Visibility.Visible : Visibility.Collapsed;
+            ChipItemGptWeekly.Visibility = (Config.ShowGpt && Config.ShowWeekly) ? Visibility.Visible : Visibility.Collapsed;
 
             RowContext.Visibility = Config.ShowContext ? Visibility.Visible : Visibility.Collapsed;
             GaugeItemContext.Visibility = Config.ShowContext ? Visibility.Visible : Visibility.Collapsed;
@@ -299,6 +343,8 @@ namespace AntigravityWidget
 
             Txt5hReset.Visibility = Config.ShowSubtitles ? Visibility.Visible : Visibility.Collapsed;
             TxtWeeklyDetails.Visibility = Config.ShowSubtitles ? Visibility.Visible : Visibility.Collapsed;
+            TxtGpt5hReset.Visibility = Config.ShowSubtitles ? Visibility.Visible : Visibility.Collapsed;
+            TxtGptWeeklyDetails.Visibility = Config.ShowSubtitles ? Visibility.Visible : Visibility.Collapsed;
 
             // 7. Theme
             ApplyTheme(Config.Theme);
@@ -314,6 +360,8 @@ namespace AntigravityWidget
 
             // 9. Context Menu Checkmarks & Cursor
             MainBorder.Cursor = Config.LockToTaskbar ? Cursors.Arrow : Cursors.SizeAll;
+            CtxShowGemini.IsChecked = Config.ShowGemini;
+            CtxShowGpt.IsChecked = Config.ShowGpt;
             CtxAutoStart.IsChecked = ConfigService.IsAutoStartEnabled();
             CtxPin.IsChecked = Config.Pinned;
             CtxClickThrough.IsChecked = Config.ClickThrough;
@@ -372,15 +420,25 @@ namespace AntigravityWidget
 
         private void UpdateUiWithData(QuotaData data)
         {
-            // Update 5-hour
+            // Update Gemini 5-hour
             Txt5hPct.Text = $"{data.Remain5hPct}%";
             Prog5h.Value = data.Remain5hPct;
             Txt5hReset.Text = data.Reset5hText;
 
-            // Update Weekly
+            // Update Gemini Weekly
             TxtWeeklyPct.Text = $"{data.RemainWeeklyPct}%";
             ProgWeekly.Value = data.RemainWeeklyPct;
             TxtWeeklyDetails.Text = data.WeeklyDetailsText;
+
+            // Update ChatGPT / Claude 5-hour
+            TxtGpt5hPct.Text = $"{data.GptRemain5hPct}%";
+            ProgGpt5h.Value = data.GptRemain5hPct;
+            TxtGpt5hReset.Text = data.GptReset5hText;
+
+            // Update ChatGPT / Claude Weekly
+            TxtGptWeeklyPct.Text = $"{data.GptRemainWeeklyPct}%";
+            ProgGptWeekly.Value = data.GptRemainWeeklyPct;
+            TxtGptWeeklyDetails.Text = data.GptWeeklyDetailsText;
 
             // Update Context
             TxtContextTokens.Text = data.ContextTokensText;
@@ -395,6 +453,14 @@ namespace AntigravityWidget
             double dashWeekly = (data.RemainWeeklyPct / 100.0) * 33.0;
             GaugeWeeklyRing.StrokeDashArray = new DoubleCollection { Math.Max(0.1, dashWeekly), 50.0 };
 
+            TxtGaugeGpt5hVal.Text = $"{data.GptRemain5hPct}%";
+            double dashGpt5h = (data.GptRemain5hPct / 100.0) * 33.0;
+            GaugeGpt5hRing.StrokeDashArray = new DoubleCollection { Math.Max(0.1, dashGpt5h), 50.0 };
+
+            TxtGaugeGptWeeklyVal.Text = $"{data.GptRemainWeeklyPct}%";
+            double dashGptWeekly = (data.GptRemainWeeklyPct / 100.0) * 33.0;
+            GaugeGptWeeklyRing.StrokeDashArray = new DoubleCollection { Math.Max(0.1, dashGptWeekly), 50.0 };
+
             TxtGaugeContextVal.Text = $"{(int)Math.Round(data.ContextPct)}%";
             double dashCtx = (data.ContextPct / 100.0) * 33.0;
             GaugeContextRing.StrokeDashArray = new DoubleCollection { Math.Max(0.1, dashCtx), 50.0 };
@@ -402,6 +468,8 @@ namespace AntigravityWidget
             // Update Chips
             TxtChip5h.Text = $"{data.Remain5hPct}%";
             TxtChipWeekly.Text = $"{data.RemainWeeklyPct}%";
+            TxtChipGpt5h.Text = $"{data.GptRemain5hPct}%";
+            TxtChipGptWeekly.Text = $"{data.GptRemainWeeklyPct}%";
             TxtChipContext.Text = $"{(int)Math.Round(data.ContextPct)}%";
 
             // Dynamic color alerts for low remaining quota (<20% red, <50% yellow)
@@ -411,6 +479,20 @@ namespace AntigravityWidget
             TxtGauge5hVal.Foreground = brush5h;
             TxtChip5h.Foreground = brush5h;
             Gauge5hRing.Stroke = brush5h;
+
+            string colorGpt5h = data.GptRemain5hPct < 20 ? "#EF4444" : (data.GptRemain5hPct < 50 ? "#F59E0B" : "#10B981");
+            var brushGpt5h = new SolidColorBrush((Color)ColorConverter.ConvertFromString(colorGpt5h));
+            TxtGpt5hPct.Foreground = brushGpt5h;
+            TxtGaugeGpt5hVal.Foreground = brushGpt5h;
+            TxtChipGpt5h.Foreground = brushGpt5h;
+            GaugeGpt5hRing.Stroke = brushGpt5h;
+
+            string colorGptWeekly = data.GptRemainWeeklyPct < 20 ? "#EF4444" : (data.GptRemainWeeklyPct < 50 ? "#F59E0B" : "#F59E0B");
+            var brushGptWeekly = new SolidColorBrush((Color)ColorConverter.ConvertFromString(colorGptWeekly));
+            TxtGptWeeklyPct.Foreground = brushGptWeekly;
+            TxtGaugeGptWeeklyVal.Foreground = brushGptWeekly;
+            TxtChipGptWeekly.Foreground = brushGptWeekly;
+            GaugeGptWeeklyRing.Stroke = brushGptWeekly;
         }
 
         private void MainBorder_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
@@ -500,6 +582,20 @@ namespace AntigravityWidget
         private void OnOrientVClick(object sender, RoutedEventArgs e)
         {
             Config.Orientation = "Vertical";
+            ApplyConfig();
+            ConfigService.Save(Config);
+        }
+
+        private void OnToggleGeminiClick(object sender, RoutedEventArgs e)
+        {
+            Config.ShowGemini = !Config.ShowGemini;
+            ApplyConfig();
+            ConfigService.Save(Config);
+        }
+
+        private void OnToggleGptClick(object sender, RoutedEventArgs e)
+        {
+            Config.ShowGpt = !Config.ShowGpt;
             ApplyConfig();
             ConfigService.Save(Config);
         }

@@ -128,6 +128,10 @@
             <CheckBox x:Name="DlgChkClickThrough" Content="Modo Fantasma (Click-Through)" Click="OnClickThroughClick"/>
             <CheckBox x:Name="DlgChkLockTaskbar" Content="Bloquear posicion (evitar arrastrar)" Click="OnLockTaskbarClick"/>
             <CheckBox x:Name="DlgChkTaskbarMode" Content="Modo Barra (Fondo y bordes invisibles)" Click="OnTaskbarModeClick"/>
+
+            <TextBlock Text="MODELOS Y METRICAS" FontSize="8.5" FontWeight="Bold" Foreground="#38BDF8" Margin="0,4,0,2"/>
+            <CheckBox x:Name="DlgChkShowGemini" Content="Mostrar Gemini (Flash / Pro)" IsChecked="True" Click="OnShowVisibilityClick"/>
+            <CheckBox x:Name="DlgChkShowGpt" Content="Mostrar ChatGPT / Claude (GPT / 3P)" IsChecked="True" Click="OnShowVisibilityClick"/>
             <CheckBox x:Name="DlgChkShow5h" Content="Mostrar Limite 5 Horas" IsChecked="True" Click="OnShowVisibilityClick"/>
             <CheckBox x:Name="DlgChkShowWeekly" Content="Mostrar Limite Semanal" IsChecked="True" Click="OnShowVisibilityClick"/>
             <CheckBox x:Name="DlgChkShowContext" Content="Mostrar Tokens de Contexto" IsChecked="True" Click="OnShowVisibilityClick"/>

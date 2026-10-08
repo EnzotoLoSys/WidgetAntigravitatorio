@@ -49,6 +49,8 @@ namespace AntigravityWidget
             DlgChkClickThrough.IsChecked = _cfg.ClickThrough;
             DlgChkLockTaskbar.IsChecked = _cfg.LockToTaskbar;
             DlgChkTaskbarMode.IsChecked = _cfg.OpacityBg <= 0.05 && _cfg.OpacityBorder <= 0.05;
+            DlgChkShowGemini.IsChecked = _cfg.ShowGemini;
+            DlgChkShowGpt.IsChecked = _cfg.ShowGpt;
             DlgChkShow5h.IsChecked = _cfg.Show5h;
             DlgChkShowWeekly.IsChecked = _cfg.ShowWeekly;
             DlgChkShowContext.IsChecked = _cfg.ShowContext;
@@ -173,6 +175,8 @@ namespace AntigravityWidget
 
         private void OnShowVisibilityClick(object sender, RoutedEventArgs e)
         {
+            _cfg.ShowGemini = DlgChkShowGemini.IsChecked ?? true;
+            _cfg.ShowGpt = DlgChkShowGpt.IsChecked ?? true;
             _cfg.Show5h = DlgChkShow5h.IsChecked ?? true;
             _cfg.ShowWeekly = DlgChkShowWeekly.IsChecked ?? true;
             _cfg.ShowContext = DlgChkShowContext.IsChecked ?? true;

@@ -17,13 +17,23 @@ namespace AntigravityWidget.Services
         public bool IsLiveApi { get; set; } = false;
         public int Count5h { get; set; }
         public int CountWeekly { get; set; }
+
+        // Gemini Metrics
         public int Remain5hPct { get; set; } = 100;
         public int RemainWeeklyPct { get; set; } = 100;
         public string Reset5hText { get; set; } = "~1h 12m";
         public string WeeklyDetailsText { get; set; } = "186 prompts";
+
+        // ChatGPT / Claude (GPT-OSS / 3P) Metrics
+        public int GptRemain5hPct { get; set; } = 100;
+        public int GptRemainWeeklyPct { get; set; } = 100;
+        public string GptReset5hText { get; set; } = "100%";
+        public string GptWeeklyDetailsText { get; set; } = "100%";
+
+        // Context Tokens
         public string ContextTokensText { get; set; } = "1k (~0.1%)";
         public double ContextPct { get; set; } = 0.1;
-        public string ModelGroupName { get; set; } = "Gemini Models";
+        public string ModelGroupName { get; set; } = "Gemini + ChatGPT";
     }
 
     public static class QuotaService
@@ -127,27 +137,17 @@ namespace AntigravityWidget.Services
                 if (!doc.RootElement.TryGetProperty("response", out var respEl)) return false;
                 if (!respEl.TryGetProperty("groups", out var groupsEl)) return false;
 
-                JsonElement? targetGroup = null;
+                bool foundAny = false;
                 foreach (var g in groupsEl.EnumerateArray())
                 {
                     string name = g.GetProperty("displayName").GetString() ?? "";
-                    if (name.Contains("Gemini", StringComparison.OrdinalIgnoreCase))
-                    {
-                        targetGroup = g;
-                        break;
-                    }
-                }
+                    bool isGemini = name.Contains("Gemini", StringComparison.OrdinalIgnoreCase);
+                    bool isGpt = name.Contains("GPT", StringComparison.OrdinalIgnoreCase) ||
+                                 name.Contains("Claude", StringComparison.OrdinalIgnoreCase) ||
+                                 name.Contains("3p", StringComparison.OrdinalIgnoreCase) ||
+                                 name.Contains("OpenAI", StringComparison.OrdinalIgnoreCase);
 
-                if (!targetGroup.HasValue && groupsEl.GetArrayLength() > 0)
-                {
-                    targetGroup = groupsEl[0];
-                }
-
-                if (targetGroup.HasValue)
-                {
-                    data.ModelGroupName = targetGroup.Value.GetProperty("displayName").GetString() ?? "Gemini Models";
-
-                    if (targetGroup.Value.TryGetProperty("buckets", out var bucketsEl))
+                    if (g.TryGetProperty("buckets", out var bucketsEl))
                     {
                         foreach (var b in bucketsEl.EnumerateArray())
                         {
@@ -157,67 +157,79 @@ namespace AntigravityWidget.Services
                             string desc = b.TryGetProperty("description", out var dEl) ? (dEl.GetString() ?? "") : "";
                             string resetTimeStr = b.TryGetProperty("resetTime", out var rEl) ? (rEl.GetString() ?? "") : "";
 
-                            if (window == "5h" || bucketId.Contains("5h"))
-                            {
-                                data.Remain5hPct = Math.Clamp((int)Math.Round(frac * 100), 0, 100);
+                            int pct = Math.Clamp((int)Math.Round(frac * 100), 0, 100);
+                            string resetText = FormatResetTime(resetTimeStr, desc, window == "5h" ? data.Count5h : data.CountWeekly);
 
-                                // Format reset time
-                                if (!string.IsNullOrEmpty(resetTimeStr) && DateTime.TryParse(resetTimeStr, out DateTime resetUtc))
+                            if (isGemini)
+                            {
+                                if (window == "5h" || bucketId.Contains("5h"))
                                 {
-                                    TimeSpan diff = resetUtc.ToUniversalTime() - DateTime.UtcNow;
-                                    if (diff.TotalMinutes > 0)
-                                    {
-                                        int h = diff.Hours;
-                                        int m = diff.Minutes;
-                                        string timeStr = h > 0 ? $"{h}h {m}m" : $"{m}m";
-                                        data.Reset5hText = $"~{timeStr} ({data.Count5h} p)";
-                                    }
-                                    else
-                                    {
-                                        data.Reset5hText = $"100% ({data.Count5h} p)";
-                                    }
+                                    data.Remain5hPct = pct;
+                                    data.Reset5hText = resetText;
+                                    foundAny = true;
                                 }
-                                else if (!string.IsNullOrEmpty(desc))
+                                else if (window == "weekly" || bucketId.Contains("weekly"))
                                 {
-                                    data.Reset5hText = desc;
+                                    data.RemainWeeklyPct = pct;
+                                    data.WeeklyDetailsText = resetText;
+                                    foundAny = true;
                                 }
                             }
-                            else if (window == "weekly" || bucketId.Contains("weekly"))
+                            else if (isGpt || !isGemini)
                             {
-                                data.RemainWeeklyPct = Math.Clamp((int)Math.Round(frac * 100), 0, 100);
-
-                                if (!string.IsNullOrEmpty(resetTimeStr) && DateTime.TryParse(resetTimeStr, out DateTime resetUtc))
+                                if (window == "5h" || bucketId.Contains("5h"))
                                 {
-                                    TimeSpan diff = resetUtc.ToUniversalTime() - DateTime.UtcNow;
-                                    if (diff.TotalDays >= 1)
-                                    {
-                                        int d = (int)diff.TotalDays;
-                                        int h = diff.Hours;
-                                        data.WeeklyDetailsText = $"~{d}d {h}h ({data.CountWeekly} p)";
-                                    }
-                                    else if (diff.TotalMinutes > 0)
-                                    {
-                                        data.WeeklyDetailsText = $"~{diff.Hours}h {diff.Minutes}m ({data.CountWeekly} p)";
-                                    }
-                                    else
-                                    {
-                                        data.WeeklyDetailsText = $"{data.CountWeekly} prompts";
-                                    }
+                                    data.GptRemain5hPct = pct;
+                                    data.GptReset5hText = resetText;
+                                    foundAny = true;
                                 }
-                                else
+                                else if (window == "weekly" || bucketId.Contains("weekly"))
                                 {
-                                    data.WeeklyDetailsText = $"{data.CountWeekly} prompts";
+                                    data.GptRemainWeeklyPct = pct;
+                                    data.GptWeeklyDetailsText = resetText;
+                                    foundAny = true;
                                 }
                             }
                         }
-                        data.IsLiveApi = true;
-                        return true;
                     }
+                }
+
+                if (foundAny)
+                {
+                    data.IsLiveApi = true;
+                    return true;
                 }
             }
             catch { }
 
             return false;
+        }
+
+        private static string FormatResetTime(string resetTimeStr, string desc, int promptCount)
+        {
+            if (!string.IsNullOrEmpty(resetTimeStr) && DateTime.TryParse(resetTimeStr, out DateTime resetUtc))
+            {
+                TimeSpan diff = resetUtc.ToUniversalTime() - DateTime.UtcNow;
+                if (diff.TotalDays >= 1)
+                {
+                    int d = (int)diff.TotalDays;
+                    int h = diff.Hours;
+                    return $"~{d}d {h}h";
+                }
+                if (diff.TotalMinutes > 0)
+                {
+                    int h = diff.Hours;
+                    int m = diff.Minutes;
+                    string timeStr = h > 0 ? $"{h}h {m}m" : $"{m}m";
+                    return $"~{timeStr}";
+                }
+                return "100%";
+            }
+            if (!string.IsNullOrEmpty(desc))
+            {
+                return desc;
+            }
+            return $"{promptCount} prompts";
         }
 
         private static void CalculateLocalMetrics(QuotaData data)
