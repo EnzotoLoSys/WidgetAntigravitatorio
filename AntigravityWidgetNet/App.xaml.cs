@@ -37,20 +37,29 @@ namespace AntigravityWidget
         {
             _notifyIcon = new NotifyIcon();
 
-            // Create a sleek icon programmatically (Cyan dot with dark background)
             try
             {
-                using var bmp = new Bitmap(16, 16);
-                using (var g = Graphics.FromImage(bmp))
+                var iconUri = new Uri("pack://application:,,,/app.ico");
+                var streamInfo = System.Windows.Application.GetResourceStream(iconUri);
+                if (streamInfo != null)
                 {
-                    g.Clear(Color.Transparent);
-                    using var brush = new SolidBrush(Color.FromArgb(56, 189, 248)); // #38BDF8 Sky Cyan
-                    g.FillEllipse(brush, 1, 1, 14, 14);
-                    using var innerBrush = new SolidBrush(Color.FromArgb(15, 23, 42)); // Slate 900
-                    g.FillEllipse(innerBrush, 4, 4, 8, 8);
+                    using (streamInfo.Stream)
+                    {
+                        _notifyIcon.Icon = new Icon(streamInfo.Stream);
+                    }
                 }
-                IntPtr hIcon = bmp.GetHicon();
-                _notifyIcon.Icon = System.Drawing.Icon.FromHandle(hIcon);
+                else
+                {
+                    string localIco = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "app.ico");
+                    if (System.IO.File.Exists(localIco))
+                    {
+                        _notifyIcon.Icon = new Icon(localIco);
+                    }
+                    else
+                    {
+                        _notifyIcon.Icon = SystemIcons.Application;
+                    }
+                }
             }
             catch
             {

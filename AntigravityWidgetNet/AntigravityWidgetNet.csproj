@@ -9,9 +9,15 @@
     <UseWindowsForms>true</UseWindowsForms>
     <AssemblyName>AntigravityWidget</AssemblyName>
     <RootNamespace>AntigravityWidget</RootNamespace>
+    <ApplicationIcon>app.ico</ApplicationIcon>
     <PublishSingleFile>true</PublishSingleFile>
     <SelfContained>false</SelfContained>
   </PropertyGroup>
+
+  <ItemGroup>
+    <Resource Include="app.ico" />
+    <Resource Include="icono.png" />
+  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="System.Management" Version="10.0.12" />

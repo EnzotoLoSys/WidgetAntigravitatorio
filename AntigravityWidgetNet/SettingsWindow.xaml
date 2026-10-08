@@ -9,6 +9,7 @@
         AllowsTransparency="True"
         Background="Transparent"
         Topmost="True"
+        Icon="app.ico"
         WindowStartupLocation="CenterScreen">
     
     <Window.Resources>
@@ -34,7 +35,7 @@
             <!-- Header with Title and Close 'X' -->
             <Grid Margin="0,0,0,8">
                 <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                    <Ellipse Width="7" Height="7" Fill="#38BDF8" Margin="0,0,6,0"/>
+                    <Image Source="icono.png" Width="16" Height="16" Margin="0,0,7,0" RenderOptions.BitmapScalingMode="HighQuality"/>
                     <TextBlock Text="Preferencias del Widget" FontSize="12.5" FontWeight="Bold" Foreground="#F8FAFC"/>
                 </StackPanel>
                 <Button x:Name="DlgBtnCloseX" Content="X" Width="22" Height="22" HorizontalAlignment="Right"
