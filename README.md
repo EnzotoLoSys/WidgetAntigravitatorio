@@ -44,13 +44,13 @@ cd AntigravityWidgetNet
 dotnet build
 ```
 
-### 2. Publicar ejecutable único portable (`AntigravityWidget.exe`):
+### 2. Publicar ejecutable standalone para clientes (`AntigravityWidget.exe`):
 ```powershell
 cd AntigravityWidgetNet
-dotnet publish -c Release -r win-x64 --self-contained false -p:PublishSingleFile=true -o ../bin
+dotnet publish -c Release -o ../bin
 ```
 
-El binario resultante se generará en la carpeta `bin/AntigravityWidget.exe` (~200 KB).
+El binario resultante se generará en `bin/AntigravityWidget.exe`. Es **100% standalone y autocontenido**: los clientes finales solo necesitan este archivo y no requieren instalar .NET ni ningún prerequisito en Windows 10 u 11.
 
 ---
 
